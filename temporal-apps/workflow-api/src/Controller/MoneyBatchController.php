@@ -21,9 +21,9 @@ class MoneyBatchController extends AbstractController
     /**
      * @param string $workflowId
      *
-     * @return MoneyBatchWorkflowInterface
+     * @return object
      */
-    private function getWorkflowStub(string $workflowId): MoneyBatchWorkflowInterface
+    private function getWorkflowStub(string $workflowId): object
     {
         return $this->workflowClient->newRunningWorkflowStub(MoneyBatchWorkflowInterface::class, $workflowId);
     }
@@ -53,6 +53,7 @@ class MoneyBatchController extends AbstractController
     )]
     public function getStatus(string $workflowId): JsonResponse
     {
+        /** @var MoneyBatchWorkflowInterface */
         $workflow = $this->getWorkflowStub($workflowId);
 
         return $this->json([
@@ -72,6 +73,7 @@ class MoneyBatchController extends AbstractController
         $workflowParams = $jsonParams["args"] ?? [];
         // TODO: validate the input data here
 
+        /** @var MoneyBatchWorkflowInterface */
         $workflow = $this->getWorkflowStub($workflowId);
         $workflow->withdraw(...$workflowParams);
 

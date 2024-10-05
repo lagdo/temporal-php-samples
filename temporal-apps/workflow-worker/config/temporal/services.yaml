@@ -1,0 +1,48 @@
+parameters:
+    # The value must be the key of an entry in the "services" section.
+    activityDefaultOptions: defaultActivityOptions
+    childWorkflowDefaultOptions: defaultChildWorkflowOptions
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # Automatically injects dependencies in your services.
+        autowire: true
+        bind:
+            # Queue for the workflow workers
+            $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
+            # Queue for the activity workers
+            $activityTaskQueue: '%env(ACTIVITY_TASK_QUEUE)%'
+
+    # Application workflows and activities
+    App\Workflow\Service\Workflow\:
+        shared: false
+        resource: '../../src/Workflow/Service/Workflow/'
+        tags: ['temporal.service.workflow']
+
+    App\Workflow\Service\Activity\:
+        shared: false
+        resource: '../../src/Workflow/Service/activity/'
+        tags: ['temporal.service.activity']
+
+    # Options for the activity proxies
+    defaultActivityOptions:
+        class: 'Temporal\Activity\ActivityOptions'
+        factory: ['App\Temporal\Factory\ActivityFactory', 'defaultOptions']
+
+    moneyBatchActivityOptions:
+        class: 'Temporal\Activity\ActivityOptions'
+        factory: ['App\Temporal\Factory\ActivityFactory', 'moneyBatchOptions']
+
+    # Options for the workflow proxies
+    defaultChildWorkflowOptions:
+        class: 'Temporal\Workflow\ChildWorkflowOptions'
+        factory: ['App\Temporal\Factory\WorkflowFactory', 'defaultOptions']
+
+    # Activity proxies
+    # App\Workflow\Service\Activity\SimpleActivity\GreetingActivityInterface:
+    #     public: true
+    #     factory: ['App\Temporal\Factory\ActivityFactory', 'stub']
+    #     arguments:
+    #         $activity: 'App\Workflow\Service\Activity\SimpleActivity\GreetingActivityInterface'
+    #         $options: '@defaultActivityOptions'

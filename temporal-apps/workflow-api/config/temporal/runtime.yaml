@@ -1,0 +1,26 @@
+parameters:
+    # Default value for the Temporal collector endpoint
+    env(OTEL_COLLECTOR_ENDPOINT): 'http://collector:4317'
+    # Default value for the Temporal server endpoint
+    env(TEMPORAL_CLI_ADDRESS): 'http://localhost:7233'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # Automatically injects dependencies in your services.
+        autowire: true
+
+    Temporal\OpenTelemetry\Tracer:
+        factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
+        arguments:
+            $serviceName: 'interceptors-sample-worker'
+            $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
+
+    Temporal\Client\WorkflowClientInterface:
+        factory: ['App\Temporal\Factory\RuntimeFactory', 'client']
+        arguments:
+            $serverAddress: '%env(TEMPORAL_CLI_ADDRESS)%'
+
+    # Temporal classes
+    App\Temporal\:
+        resource: '../../src/Temporal/'

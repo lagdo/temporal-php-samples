@@ -1,0 +1,38 @@
+parameters:
+    # Default value for the collector endpoint
+    env(OTEL_COLLECTOR_ENDPOINT): 'http://collector:4317'
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # Automatically injects dependencies in your services.
+        autowire: true
+        bind:
+            $container: '@service_container'
+            # Queue for the workflow workers
+            $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
+
+    Temporal\OpenTelemetry\Tracer:
+        factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
+        arguments:
+            $serviceName: 'interceptors-sample-worker'
+            $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
+
+    Temporal\WorkerFactory:
+        factory: [null, 'create']
+
+    Temporal\Worker\WorkerFactoryInterface: '@Temporal\WorkerFactory'
+
+    Temporal\Worker\WorkerInterface:
+        factory: ['App\Temporal\Factory\RuntimeFactory', 'worker']
+
+    # Temporal classes
+    App\Temporal\:
+        resource: '../../src/Temporal/'
+
+    App\Temporal\Runtime\RuntimeInterface: '@App\Temporal\Runtime\Runtime'
+
+when@test:
+    services:
+        Temporal\WorkerFactory:
+            factory: ['Temporal\Testing\WorkerFactory', 'create']

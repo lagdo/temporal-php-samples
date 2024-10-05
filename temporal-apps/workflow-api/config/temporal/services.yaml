@@ -1,0 +1,33 @@
+parameters:
+    # The value must be the key of an entry in the "services" section.
+    workflowDefaultOptions: defaultWorkflowOptions
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        bind:
+            # Queue for the workflow workers
+            $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
+
+    # Application workflows
+    App\Workflow\Service\Workflow\:
+        shared: false
+        resource: '../../src/Workflow/Service/Workflow/'
+        tags: ['temporal.service.workflow']
+
+    # Options for the workflow proxies
+    defaultWorkflowOptions:
+        class: 'Temporal\Client\WorkflowOptions'
+        factory: ['App\Temporal\Factory\WorkflowFactory', 'defaultOptions']
+
+    moneyBatchWorkflowOptions:
+        class: 'Temporal\Client\WorkflowOptions'
+        factory: ['App\Temporal\Factory\WorkflowFactory', 'moneyBatchOptions']
+
+    # Workflow proxies
+    # App\Workflow\Service\Workflow\SimpleActivity\GreetingWorkflowInterface:
+    #     public: true
+    #     factory: ['App\Temporal\Factory\WorkflowFactory', 'stub']
+    #     arguments:
+    #         $workflow: 'App\Workflow\Service\Workflow\SimpleActivity\GreetingWorkflowInterface'
+    #         $options: '@defaultWorkflowOptions'

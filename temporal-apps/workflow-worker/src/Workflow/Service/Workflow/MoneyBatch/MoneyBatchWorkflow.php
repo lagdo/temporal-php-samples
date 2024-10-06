@@ -39,6 +39,7 @@ class MoneyBatchWorkflow implements MoneyBatchWorkflowInterface
             // duplicate
             return;
         }
+        $this->references[$referenceId] = $fromAccountId;
 
         yield AccountActivityFacade::withdraw($fromAccountId, $referenceId, $amountCents);
 

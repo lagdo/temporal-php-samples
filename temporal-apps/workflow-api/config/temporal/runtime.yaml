@@ -17,6 +17,7 @@ services:
             $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
 
     Temporal\Client\WorkflowClientInterface:
+        public: true # We need to have a facade for this service.
         factory: ['App\Temporal\Factory\RuntimeFactory', 'client']
         arguments:
             $serverAddress: '%env(TEMPORAL_CLI_ADDRESS)%'

@@ -9,25 +9,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
-use Temporal\Client\WorkflowClientInterface;
 
 #[AsController]
 #[Route('/api/money/batch', name: 'api_money_batch_')]
 class MoneyBatchController extends AbstractController
 {
-    public function __construct(private WorkflowClientInterface $workflowClient)
-    {}
-
-    /**
-     * @param string $workflowId
-     *
-     * @return object
-     */
-    private function getWorkflowStub(string $workflowId): object
-    {
-        return $this->workflowClient->newRunningWorkflowStub(MoneyBatchWorkflowInterface::class, $workflowId);
-    }
-
     #[Route(
         '/workflows',
         name: 'start_workflow',
@@ -39,11 +25,12 @@ class MoneyBatchController extends AbstractController
         $workflowParams = $jsonParams["args"] ?? [];
         // TODO: validate the input data here
 
-        $exec = $this->workflowClient
-            ->start(MoneyBatchWorkflowFacade::instance(), ...$workflowParams)
-            ->getExecution();
+        $workflowExecution = MoneyBatchWorkflowFacade::startWorkflow(...$workflowParams);
 
-        return $this->json(['workflow' => $exec->getID(), 'run' => $exec->getRunID()]);
+        return $this->json([
+            'workflow' => $workflowExecution->getID(),
+            'run' => $workflowExecution->getRunID(),
+        ]);
     }
 
     #[Route(
@@ -54,7 +41,7 @@ class MoneyBatchController extends AbstractController
     public function getStatus(string $workflowId): JsonResponse
     {
         /** @var MoneyBatchWorkflowInterface */
-        $workflow = $this->getWorkflowStub($workflowId);
+        $workflow = MoneyBatchWorkflowFacade::getRunningWorkflow($workflowId);
 
         return $this->json([
             'count'=> $workflow->getCount(),
@@ -74,7 +61,7 @@ class MoneyBatchController extends AbstractController
         // TODO: validate the input data here
 
         /** @var MoneyBatchWorkflowInterface */
-        $workflow = $this->getWorkflowStub($workflowId);
+        $workflow = MoneyBatchWorkflowFacade::getRunningWorkflow($workflowId);
         $workflow->withdraw(...$workflowParams);
 
         return $this->json(['success'=> true]);

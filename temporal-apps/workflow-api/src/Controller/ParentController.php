@@ -8,15 +8,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
-use Temporal\Client\WorkflowClientInterface;
 
 #[AsController]
 #[Route('/api/parent', name: 'api_parent_')]
 class ParentController extends AbstractController
 {
-    public function __construct(private WorkflowClientInterface $workflowClient)
-    {}
-
     #[Route(
         '/workflows',
         name: 'start_workflow',
@@ -28,10 +24,11 @@ class ParentController extends AbstractController
         $workflowParams = $jsonParams["args"] ?? [];
         // TODO: validate the input data here
 
-        $exec = $this->workflowClient
-            ->start(ParentWorkflowFacade::instance(), ...$workflowParams)
-            ->getExecution();
+        $workflowExecution = ParentWorkflowFacade::startWorkflow(...$workflowParams);
 
-        return $this->json(['workflow' => $exec->getID(), 'run' => $exec->getRunID()]);
+        return $this->json([
+            'workflow' => $workflowExecution->getID(),
+            'run' => $workflowExecution->getRunID(),
+        ]);
     }
 }

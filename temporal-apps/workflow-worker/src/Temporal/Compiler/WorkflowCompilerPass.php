@@ -56,6 +56,7 @@ class WorkflowCompilerPass implements CompilerPassInterface
             return null;
         }
 
+        // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
         $serviceIdentifierMethod = $reflectionClass->getMethod('getServiceIdentifier');
         $serviceIdentifierMethod->setAccessible(true);
         $workflowInterfaceName = $serviceIdentifierMethod->invoke(null);
@@ -80,7 +81,7 @@ class WorkflowCompilerPass implements CompilerPassInterface
         $workflow = $reflectionClass->getName();
         $optionsKey = $this->getOptionsKey($container, $reflectionClass);
         $definition = (new Definition($workflow))
-            ->setFactory(WorkflowFactory::class . '::childStub')
+            ->setFactory(WorkflowFactory::class . '::childWorkflowStub')
             ->setArgument('$workflow', $workflow)
             ->setArgument('$options', new Reference($optionsKey))
             ->setPublic(true); // The facade needs the service to be public.

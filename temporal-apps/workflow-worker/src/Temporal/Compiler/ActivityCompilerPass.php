@@ -51,6 +51,7 @@ class ActivityCompilerPass implements CompilerPassInterface
             return null;
         }
 
+        // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
         $serviceIdentifierMethod = $reflectionClass->getMethod('getServiceIdentifier');
         $serviceIdentifierMethod->setAccessible(true);
         $activityInterfaceName = $serviceIdentifierMethod->invoke(null);
@@ -75,7 +76,7 @@ class ActivityCompilerPass implements CompilerPassInterface
         $activity = $reflectionClass->getName();
         $optionsKey = $this->getOptionsKey($container, $reflectionClass);
         $definition = (new Definition($activity))
-            ->setFactory(ActivityFactory::class . '::stub')
+            ->setFactory(ActivityFactory::class . '::activityStub')
             ->setArgument('$activity', $activity)
             ->setArgument('$options', new Reference($optionsKey))
             ->setPublic(true); // The facade needs the service to be public.

@@ -53,7 +53,7 @@ class ActivityFactory
      *
      * @return mixed
      */
-    public static function stub(string $activity, ActivityOptions $options): mixed
+    public static function activityStub(string $activity, ActivityOptions $options): mixed
     {
         return Workflow::newActivityStub($activity, $options);
     }

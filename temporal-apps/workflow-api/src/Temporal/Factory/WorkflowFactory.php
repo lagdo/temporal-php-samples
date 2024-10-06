@@ -43,7 +43,7 @@ class WorkflowFactory
      *
      * @return mixed
      */
-    public static function stub(string $workflow, WorkflowOptions $options,
+    public static function workflowStub(string $workflow, WorkflowOptions $options,
         WorkflowClientInterface $workflowClient): mixed
     {
         return $workflowClient->newWorkflowStub($workflow, $options);

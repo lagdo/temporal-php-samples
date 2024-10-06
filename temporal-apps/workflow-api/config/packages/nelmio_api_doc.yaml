@@ -1,0 +1,220 @@
+nelmio_api_doc:
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+        host_patterns: # document only routes with a host of the form api.*
+            - ^api\.
+
+    documentation:
+        info:
+            title: Temporal Symfony samples
+            description: Sample Symfony apps to run an API and workers for Temporal workflows.
+            version: 0.0.1
+        paths:
+            /api/greeting/workflows:
+                post:
+                    summary: 'Start a simple activity workflow'
+                    description: 'Start a simple activity workflow'
+                    operationId: api_simple_activity_start_workflow
+                    tags:
+                        - "Simple Activity"
+                    requestBody:
+                        description: The workflow parameters
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "#/components/schemas/Greet"
+                    responses:
+                        "200":
+                            description: Workflow successfully started
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/WorkflowIds"
+            /api/parent/workflows:
+                post:
+                    summary: 'Start a parent workflow'
+                    description: 'Start a parent workflow'
+                    operationId: api_parent_start_workflow
+                    tags:
+                        - "Parent/Child workflow"
+                    requestBody:
+                        description: The workflow parameters
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "#/components/schemas/Greet"
+                    responses:
+                        "200":
+                            description: Workflow successfully started
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/WorkflowIds"
+            /api/money/transfer/workflows:
+                post:
+                    summary: 'Start a money transfer workflow'
+                    description: 'Start a money transfer workflow'
+                    operationId: api_money_transfer_start_workflow
+                    tags:
+                        - "Money transfer"
+                    requestBody:
+                        description: The workflow parameters
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "#/components/schemas/MoneyTransfer"
+                    responses:
+                        "200":
+                            description: Workflow successfully started
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/WorkflowIds"
+            /api/money/batch/workflows:
+                post:
+                    summary: 'Start a money batch workflow'
+                    description: 'Start a money batch workflow'
+                    operationId: api_money_batch_start_workflow
+                    tags:
+                        - "Money batch"
+                    requestBody:
+                        description: The workflow parameters
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "#/components/schemas/MoneyBatch"
+                    responses:
+                        "200":
+                            description: Workflow successfully started
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/WorkflowIds"
+            /api/money/batch/workflows/{workflowId}/_status:
+                get:
+                    summary: 'Get a money batch workflow status'
+                    description: 'Get a money batch workflow status'
+                    operationId: api_money_batch_get_workflow_status
+                    tags:
+                        - "Money batch"
+                    parameters:
+                        -
+                            in: path
+                            name: workflowId
+                            required: true
+                            description: The workflow id
+                            schema:
+                                type: string
+                    responses:
+                        "200":
+                            description: The batch workflow status
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/MoneyBatchStatus"
+            /api/money/batch/workflows/{workflowId}/_withdraw:
+                patch:
+                    summary: 'Withdraw on a money batch workflow'
+                    description: 'Withdraw on a money batch workflow'
+                    operationId: api_money_batch_withdraw_on_workflow
+                    tags:
+                        - "Money batch"
+                    parameters:
+                        -
+                            in: path
+                            name: workflowId
+                            required: true
+                            description: The workflow id
+                            schema:
+                                type: string
+                    requestBody:
+                        description: The workflow parameters
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "#/components/schemas/MoneyWithdraw"
+                    responses:
+                        "200":
+                            description: The operation result
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/Result"
+
+        components:
+            schemas:
+                WorkflowIds:
+                    type: object
+                    properties:
+                        workflow:
+                            title: 'Workflow id'
+                            description: 'Workflow id'
+                            type: string
+                            format: uuid
+                        run:
+                            title: 'Run id'
+                            description: 'Run id'
+                            type: string
+                            format: uuid
+                Result:
+                    type: object
+                    properties:
+                        success:
+                            type: boolean
+                MoneyBatchStatus:
+                    type: object
+                    properties:
+                        count:
+                            type: integer
+                        balance:
+                            type: integer
+                Greet:
+                    type: object
+                    properties:
+                        args:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                MoneyTransfer:
+                    type: object
+                    properties:
+                        args:
+                            type: object
+                            properties:
+                                fromAccountId:
+                                    type: string
+                                toAccountId:
+                                    type: string
+                                referenceId:
+                                    type: string
+                                amountCents:
+                                    type: integer
+                MoneyBatch:
+                    type: object
+                    properties:
+                        args:
+                            type: object
+                            properties:
+                                toAccountId:
+                                    type: string
+                                batchSize:
+                                    type: integer
+                MoneyWithdraw:
+                    type: object
+                    properties:
+                        args:
+                            type: object
+                            properties:
+                                fromAccountId:
+                                    type: string
+                                referenceId:
+                                    type: string
+                                amountCents:
+                                    type: integer

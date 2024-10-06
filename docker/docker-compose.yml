@@ -12,7 +12,7 @@ services:
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
-      - TEMPORAL_CLI_ADDRESS=temporal.addr:7233
+      - TEMPORAL_SERVER_ADDR=temporal.addr:7233
       - TELEMETRY_DRIVER=otel
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
@@ -39,7 +39,7 @@ services:
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
-      - TEMPORAL_CLI_ADDRESS=temporal.addr:7233
+      - TEMPORAL_SERVER_ADDR=temporal.addr:7233
       - TELEMETRY_DRIVER=otel
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
@@ -66,7 +66,7 @@ services:
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
-      - TEMPORAL_CLI_ADDRESS=temporal.addr:7233
+      - TEMPORAL_SERVER_ADDR=temporal.addr:7233
       - TELEMETRY_DRIVER=otel
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf

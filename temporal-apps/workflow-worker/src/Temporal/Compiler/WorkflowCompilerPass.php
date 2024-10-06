@@ -28,8 +28,8 @@ class WorkflowCompilerPass implements CompilerPassInterface
         $workflows = $container->findTaggedServiceIds('temporal.service.workflow');
         foreach($workflows as $workflow => $_)
         {
-            $reflectionClass = new ReflectionClass($workflow);
-            $workflowInterface = $this->getInterfaceFromFacade($reflectionClass);
+            $workflowClass = new ReflectionClass($workflow);
+            $workflowInterface = $this->getInterfaceFromFacade($workflowClass);
             if($workflowInterface === null)
             {
                 $runtimeDefinition->addMethodCall('addWorkflow', [$workflow]);
@@ -45,19 +45,19 @@ class WorkflowCompilerPass implements CompilerPassInterface
     }
 
     /**
-     * @param ReflectionClass $reflectionClass
+     * @param ReflectionClass $workflowClass
      *
      * @return ReflectionClass|null
      */
-    private function getInterfaceFromFacade(ReflectionClass $reflectionClass): ?ReflectionClass
+    private function getInterfaceFromFacade(ReflectionClass $workflowClass): ?ReflectionClass
     {
-        if(!$reflectionClass->isSubclassOf(AbstractFacade::class))
+        if(!$workflowClass->isSubclassOf(AbstractFacade::class))
         {
             return null;
         }
 
         // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
-        $serviceIdentifierMethod = $reflectionClass->getMethod('getServiceIdentifier');
+        $serviceIdentifierMethod = $workflowClass->getMethod('getServiceIdentifier');
         $serviceIdentifierMethod->setAccessible(true);
         $workflowInterfaceName = $serviceIdentifierMethod->invoke(null);
         $workflowInterface = new ReflectionClass($workflowInterfaceName);
@@ -72,14 +72,14 @@ class WorkflowCompilerPass implements CompilerPassInterface
 
     /**
      * @param ContainerBuilder $container
-     * @param ReflectionClass $reflectionClass The key for the options in the DI container
+     * @param ReflectionClass $workflowInterface
      *
      * @return void
      */
-    private function registerChildWorkflowStub(ContainerBuilder $container, ReflectionClass $reflectionClass): void
+    private function registerChildWorkflowStub(ContainerBuilder $container, ReflectionClass $workflowInterface): void
     {
-        $workflow = $reflectionClass->getName();
-        $optionsKey = $this->getOptionsKey($container, $reflectionClass);
+        $workflow = $workflowInterface->getName();
+        $optionsKey = $this->getOptionsKey($container, $workflowInterface);
         $definition = (new Definition($workflow))
             ->setFactory(WorkflowFactory::class . '::childWorkflowStub')
             ->setArgument('$workflow', $workflow)
@@ -90,13 +90,13 @@ class WorkflowCompilerPass implements CompilerPassInterface
 
     /**
      * @param ContainerBuilder $container
-     * @param ReflectionClass $reflectionClass
+     * @param ReflectionClass $workflowInterface
      *
      * @return string
      */
-    public function getOptionsKey(ContainerBuilder $container, ReflectionClass $reflectionClass): string
+    public function getOptionsKey(ContainerBuilder $container, ReflectionClass $workflowInterface): string
     {
-        $attributes = $reflectionClass->getAttributes(ChildWorkflowOptions::class);
+        $attributes = $workflowInterface->getAttributes(ChildWorkflowOptions::class);
 
         return count($attributes) > 0 ? $attributes[0]->newInstance()->serviceId :
             $container->getParameter('childWorkflowDefaultOptions');

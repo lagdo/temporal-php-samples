@@ -27,8 +27,8 @@ class ActivityCompilerPass implements CompilerPassInterface
         $activities = $container->findTaggedServiceIds('temporal.service.activity');
         foreach($activities as $activity => $_)
         {
-            $reflectionClass = new ReflectionClass($activity);
-            $activityInterface = $this->getInterfaceFromFacade($reflectionClass);
+            $activityClass = new ReflectionClass($activity);
+            $activityInterface = $this->getInterfaceFromFacade($activityClass);
             if($activityInterface !== null)
             {
                 // The class is a facade. Register a activity stub.
@@ -40,19 +40,19 @@ class ActivityCompilerPass implements CompilerPassInterface
     }
 
     /**
-     * @param ReflectionClass $reflectionClass
+     * @param ReflectionClass $activityClass
      *
      * @return ReflectionClass|null
      */
-    private function getInterfaceFromFacade(ReflectionClass $reflectionClass): ?ReflectionClass
+    private function getInterfaceFromFacade(ReflectionClass $activityClass): ?ReflectionClass
     {
-        if(!$reflectionClass->isSubclassOf(AbstractFacade::class))
+        if(!$activityClass->isSubclassOf(AbstractFacade::class))
         {
             return null;
         }
 
         // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
-        $serviceIdentifierMethod = $reflectionClass->getMethod('getServiceIdentifier');
+        $serviceIdentifierMethod = $activityClass->getMethod('getServiceIdentifier');
         $serviceIdentifierMethod->setAccessible(true);
         $activityInterfaceName = $serviceIdentifierMethod->invoke(null);
         $activityInterface = new ReflectionClass($activityInterfaceName);
@@ -67,14 +67,14 @@ class ActivityCompilerPass implements CompilerPassInterface
 
     /**
      * @param ContainerBuilder $container
-     * @param ReflectionClass $reflectionClass The key for the options in the DI container
+     * @param ReflectionClass $activityInterface
      *
      * @return void
      */
-    private function registerActivityStub(ContainerBuilder $container, ReflectionClass $reflectionClass): void
+    private function registerActivityStub(ContainerBuilder $container, ReflectionClass $activityInterface): void
     {
-        $activity = $reflectionClass->getName();
-        $optionsKey = $this->getOptionsKey($container, $reflectionClass);
+        $activity = $activityInterface->getName();
+        $optionsKey = $this->getOptionsKey($container, $activityInterface);
         $definition = (new Definition($activity))
             ->setFactory(ActivityFactory::class . '::activityStub')
             ->setArgument('$activity', $activity)
@@ -85,13 +85,13 @@ class ActivityCompilerPass implements CompilerPassInterface
 
     /**
      * @param ContainerBuilder $container
-     * @param ReflectionClass $reflectionClass
+     * @param ReflectionClass $activityInterface
      *
      * @return string
      */
-    public function getOptionsKey(ContainerBuilder $container, ReflectionClass $reflectionClass): string
+    public function getOptionsKey(ContainerBuilder $container, ReflectionClass $activityInterface): string
     {
-        $attributes = $reflectionClass->getAttributes(ActivityOptions::class);
+        $attributes = $activityInterface->getAttributes(ActivityOptions::class);
 
         return count($attributes) > 0 ? $attributes[0]->newInstance()->serviceId :
             $container->getParameter('activityDefaultOptions');

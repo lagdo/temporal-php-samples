@@ -2,7 +2,7 @@
 
 This repo provides sample Symfony applications and Docker Compose config to easily get started with [Temporal durable workflows](https://temporal.io/).
 
-There applications are in the `temporal-apps` subdir.
+The applications are in the `temporal-apps` subdir.
 - An API to interact (start, query, signal) with the workflows: `temporal-apps\workflow-api`.
 - A first worker that only execute Temporal workflow functions: `temporal-apps\workflow-worker`.
 - A second worker that only execute Temporal activity functions: `temporal-apps\activity-worker`.
@@ -38,7 +38,7 @@ These proxy classes are called `stubs`.
 
 It can be supposed that they implement the interfaces of the workflows and activities they are proxying, althougth they actually do not. That's why the Symfony dependency injection cannot be used to inject a stub where a workflow or an activity interface is required.
 
-As a consequence, [facades](https://github.com/lagdo/symfony-facades) are used anytime a call to a workflow or an activity function needs to be made.
+As a consequence, a [facade](https://github.com/lagdo/symfony-facades) is used anytime a call to a workflow or an activity function needs to be made.
 That means:
 - When a workflow is started or called in the `workflow-api` app.
 - When an actiivity is called or a child workflow started in the `workflow-worker` app.
@@ -92,3 +92,5 @@ Three classes are defined for attributes: `App\Temporal\Attribute\WorkflowOption
 ### Attributes
 
 ### PHP application servers
+
+### Credits

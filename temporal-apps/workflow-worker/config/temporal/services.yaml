@@ -22,7 +22,7 @@ services:
 
     App\Workflow\Service\Activity\:
         shared: false
-        resource: '../../src/Workflow/Service/activity/'
+        resource: '../../src/Workflow/Service/Activity/'
         tags: ['temporal.service.activity']
 
     # Options for the activity proxies

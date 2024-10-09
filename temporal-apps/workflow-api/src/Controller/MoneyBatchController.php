@@ -21,11 +21,11 @@ class MoneyBatchController extends AbstractController
     )]
     public function startWorkflow(Request $request): JsonResponse
     {
-        $jsonParams = $request->getPayload()->all();
-        $workflowParams = $jsonParams["args"] ?? [];
+        $jsonArguments = $request->getPayload()->all();
+        $workflowArguments = $jsonArguments["args"] ?? [];
         // TODO: validate the input data here
 
-        $workflowExecution = MoneyBatchWorkflowFacade::startWorkflow(...$workflowParams);
+        $workflowExecution = MoneyBatchWorkflowFacade::startWorkflow(...$workflowArguments);
 
         return $this->json([
             'workflow' => $workflowExecution->getID(),
@@ -56,13 +56,13 @@ class MoneyBatchController extends AbstractController
     )]
     public function withdraw(Request $request, string $workflowId): JsonResponse
     {
-        $jsonParams = $request->getPayload()->all();
-        $workflowParams = $jsonParams["args"] ?? [];
+        $jsonArguments = $request->getPayload()->all();
+        $workflowArguments = $jsonArguments["args"] ?? [];
         // TODO: validate the input data here
 
         /** @var MoneyBatchWorkflowInterface */
         $workflow = MoneyBatchWorkflowFacade::getRunningWorkflow($workflowId);
-        $workflow->withdraw(...$workflowParams);
+        $workflow->withdraw(...$workflowArguments);
 
         return $this->json(['success'=> true]);
     }

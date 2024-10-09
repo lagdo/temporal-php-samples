@@ -20,11 +20,11 @@ class SimpleActivityController extends AbstractController
     )]
     public function startWorkflow(Request $request): JsonResponse
     {
-        $jsonParams = $request->getPayload()->all();
-        $workflowParams = $jsonParams["args"] ?? [];
+        $jsonArguments = $request->getPayload()->all();
+        $workflowArguments = $jsonArguments["args"] ?? [];
         // TODO: validate the input data here
 
-        $workflowExecution = GreetingWorkflowFacade::startWorkflow(...$workflowParams);
+        $workflowExecution = GreetingWorkflowFacade::startWorkflow(...$workflowArguments);
 
         return $this->json([
             'workflow' => $workflowExecution->getID(),

@@ -20,11 +20,11 @@ class MoneyTransferController extends AbstractController
     )]
     public function startWorkflow(Request $request): JsonResponse
     {
-        $jsonParams = $request->getPayload()->all();
-        $workflowParams = $jsonParams["args"] ?? [];
+        $jsonArguments = $request->getPayload()->all();
+        $workflowArguments = $jsonArguments["args"] ?? [];
         // TODO: validate the input data here
 
-        $workflowExecution = AccountTransferWorkflowFacade::startWorkflow(...$workflowParams);
+        $workflowExecution = AccountTransferWorkflowFacade::startWorkflow(...$workflowArguments);
 
         return $this->json([
             'workflow' => $workflowExecution->getID(),

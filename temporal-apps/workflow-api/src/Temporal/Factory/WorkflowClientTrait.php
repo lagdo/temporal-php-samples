@@ -23,13 +23,13 @@ trait WorkflowClientTrait
     abstract protected static function getServiceIdentifier(): string;
 
     /**
-     * @param array $workflowParams
+     * @param array $workflowArguments
      *
      * @return WorkflowExecution
      */
-    public static function startWorkflow(...$workflowParams): WorkflowExecution
+    public static function startWorkflow(...$workflowArguments): WorkflowExecution
     {
-        return WorkflowClientFacade::start(self::instance(), ...$workflowParams)->getExecution();
+        return WorkflowClientFacade::start(self::instance(), ...$workflowArguments)->getExecution();
     }
 
     /**

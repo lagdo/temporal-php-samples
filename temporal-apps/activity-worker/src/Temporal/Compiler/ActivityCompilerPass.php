@@ -3,6 +3,8 @@
 namespace App\Temporal\Compiler;
 
 use App\Temporal\Runtime\Runtime;
+use Lagdo\Symfony\Facades\AbstractFacade;
+use ReflectionClass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -21,10 +23,14 @@ class ActivityCompilerPass implements CompilerPassInterface
         $activities = $container->findTaggedServiceIds('temporal.service.activity');
         foreach($activities as $activity => $_)
         {
-            // Set the class as public, because it will need to to fetched
-            // directly from the service container.
-            $container->findDefinition($activity)->setPublic(true);
-            $runtimeDefinition->addMethodCall('addActivity', [$activity]);
+            $activityClass = new ReflectionClass($activity);
+            if(!$activityClass->isSubclassOf(AbstractFacade::class))
+            {
+                // Set the class as public, because it will need to be fetched
+                // directly from the service container.
+                $container->findDefinition($activity)->setPublic(true);
+                $runtimeDefinition->addMethodCall('addActivity', [$activity]);
+            }
         }
     }
 }

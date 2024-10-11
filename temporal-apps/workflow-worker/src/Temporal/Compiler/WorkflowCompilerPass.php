@@ -29,12 +29,13 @@ class WorkflowCompilerPass implements CompilerPassInterface
         foreach($workflows as $workflow => $_)
         {
             $workflowClass = new ReflectionClass($workflow);
-            $workflowInterface = $this->getInterfaceFromFacade($workflowClass);
-            if($workflowInterface === null)
+            if(!$workflowClass->isSubclassOf(AbstractFacade::class))
             {
                 $runtimeDefinition->addMethodCall('addWorkflow', [$workflow]);
+                continue;
             }
-            else
+            $workflowInterface = $this->getInterfaceFromFacade($workflowClass);
+            if($workflowInterface !== null)
             {
                 // The class is a facade. Register a child workflow stub.
                 $this->registerChildWorkflowStub($container, $workflowInterface);

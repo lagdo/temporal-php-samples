@@ -5,8 +5,8 @@ rpc:
 
 server:
   command: "php bin/console temporal:runtime:run"
-  user: "www-data"
-  group: "www-data"
+  user: "temporal"
+  group: "temporal"
 
 temporal:
   address: ${TEMPORAL_HOST:-temporal.addr}:${TEMPORAL_PORT:-7233}

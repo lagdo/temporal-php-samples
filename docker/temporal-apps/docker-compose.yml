@@ -5,10 +5,11 @@ services:
       context: ./
       dockerfile: activity-worker/Dockerfile
       args:
-        - UID=${UID:-1000}
-        - GID=${GID:-1000}
+        - PHP_USER=temporal
+        - PHP_UID=${PHP_UID:-1000}
+        - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../temporal-apps/activity-worker:/var/www
+     - ../../temporal-apps/activity-worker:/var/www
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
@@ -32,10 +33,11 @@ services:
       context: ./
       dockerfile: workflow-worker/Dockerfile
       args:
-        - UID=${UID:-1000}
-        - GID=${GID:-1000}
+        - PHP_USER=temporal
+        - PHP_UID=${PHP_UID:-1000}
+        - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../temporal-apps/workflow-worker:/var/www
+     - ../../temporal-apps/workflow-worker:/var/www
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
@@ -53,16 +55,17 @@ services:
       - "collector.addr=host-gateway"
     command: [ "/usr/local/bin/rr", "serve", "-c", "/var/www/rr.yaml" ]
 
-  workflow-api:
-    container_name: workflow-api
+  workflow-api-nginx-phpfpm:
+    container_name: workflow-api-nginx-phpfpm
     build:
       context: ./
       dockerfile: workflow-api/nginx-phpfpm/Dockerfile
       args:
-        - UID=${UID:-1000}
-        - GID=${GID:-1000}
+        - PHP_USER=temporal
+        - PHP_UID=${PHP_UID:-1000}
+        - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../temporal-apps/workflow-api:/var/www
+     - ../../temporal-apps/workflow-api:/var/www
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue

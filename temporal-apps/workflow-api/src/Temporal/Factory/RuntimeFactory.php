@@ -48,6 +48,6 @@ class RuntimeFactory
         $resource = ResourceInfoFactory::defaultResource()->merge(ResourceInfo::create($attributes));
         $provider = new TracerProvider(spanProcessors: $spanProcessor, resource: $resource);
 
-        return new Tracer($provider->getTracer('Temporal Symfony Templates'), TraceContextPropagator::getInstance());
+        return new Tracer($provider->getTracer('Temporal Symfony samples'), TraceContextPropagator::getInstance());
     }
 }

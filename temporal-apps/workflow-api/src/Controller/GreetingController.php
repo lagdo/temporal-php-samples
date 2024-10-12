@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 #[AsController]
 #[Route('/api/greeting', name: 'api_simple_activity_')]
-class SimpleActivityController extends AbstractController
+class GreetingController extends AbstractController
 {
     #[Route(
         '/workflows',

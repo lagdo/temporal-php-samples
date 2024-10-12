@@ -68,7 +68,7 @@ RUN docker-php-ext-install pdo pdo_mysql gd
 
 # Configure PHP-FPM
 COPY workflow-api/nginx-phpfpm/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
-COPY workflow-api/nginx-phpfpm/config/fpm-pool.conf /etc/${PHP_V}/php-fpm.d/www.conf
+COPY workflow-api/nginx-phpfpm/config/www.conf /etc/${PHP_V}/php-fpm.d/www.conf
 
 # Configure Nginx - http
 COPY workflow-api/nginx-phpfpm/config/nginx.conf /etc/nginx/nginx.conf

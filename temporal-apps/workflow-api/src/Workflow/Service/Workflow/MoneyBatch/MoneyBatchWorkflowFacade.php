@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Workflow\MoneyBatch;
 
-use App\Temporal\Factory\WorkflowClientTrait;
-use Lagdo\Symfony\Facades\AbstractFacade;
+use App\Temporal\Factory\AbstractWorkflowFacade;
 
-class MoneyBatchWorkflowFacade extends AbstractFacade
+class MoneyBatchWorkflowFacade extends AbstractWorkflowFacade
 {
-    use WorkflowClientTrait;
-
     /**
      * @inheritDoc
      */

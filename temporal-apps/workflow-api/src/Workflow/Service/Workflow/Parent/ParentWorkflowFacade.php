@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Workflow\Parent;
 
-use App\Temporal\Factory\WorkflowClientTrait;
-use Lagdo\Symfony\Facades\AbstractFacade;
+use App\Temporal\Factory\AbstractWorkflowFacade;
 
-class ParentWorkflowFacade extends AbstractFacade
+class ParentWorkflowFacade extends AbstractWorkflowFacade
 {
-    use WorkflowClientTrait;
-
     /**
      * @inheritDoc
      */

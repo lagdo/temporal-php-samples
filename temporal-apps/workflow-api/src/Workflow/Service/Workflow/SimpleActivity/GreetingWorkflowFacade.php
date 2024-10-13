@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Workflow\SimpleActivity;
 
-use App\Temporal\Factory\WorkflowClientTrait;
-use Lagdo\Symfony\Facades\AbstractFacade;
+use App\Temporal\Factory\AbstractWorkflowFacade;
 
-class GreetingWorkflowFacade extends AbstractFacade
+class GreetingWorkflowFacade extends AbstractWorkflowFacade
 {
-    use WorkflowClientTrait;
-
     /**
      * @inheritDoc
      */

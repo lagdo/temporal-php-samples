@@ -4,24 +4,11 @@ declare(strict_types=1);
 
 namespace App\Temporal\Factory;
 
+use Lagdo\Symfony\Facades\AbstractFacade;
 use Temporal\Workflow\WorkflowExecution;
 
-trait WorkflowClientTrait
+abstract class AbstractWorkflowFacade extends AbstractFacade
 {
-    /**
-     * Get the facade service instance.
-     *
-     * @return mixed
-     */
-    abstract public static function instance();
-
-    /**
-     * Get the facade service identifier.
-     *
-     * @return string
-     */
-    abstract protected static function getServiceIdentifier(): string;
-
     /**
      * @param array $workflowArguments
      *

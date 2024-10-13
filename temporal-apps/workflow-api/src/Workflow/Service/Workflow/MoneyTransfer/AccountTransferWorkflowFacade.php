@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Workflow\MoneyTransfer;
 
-use App\Temporal\Factory\WorkflowClientTrait;
-use Lagdo\Symfony\Facades\AbstractFacade;
+use App\Temporal\Factory\AbstractWorkflowFacade;
 
-class AccountTransferWorkflowFacade extends AbstractFacade
+class AccountTransferWorkflowFacade extends AbstractWorkflowFacade
 {
-    use WorkflowClientTrait;
-
     /**
      * @inheritDoc
      */

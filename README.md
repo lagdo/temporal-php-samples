@@ -12,9 +12,9 @@ There are 3 applications in the `temporal-apps` subdir.
 The workers are powered by the [RoadRunner](https://roadrunner.dev/) application server.
 The workflow workers and activity workers are configured to listen on two separate queues on the Temporal server.
 
-The API run either with `Nginx+PHP-FPM`, [Nginx Unit](https://unit.nginx.org/) or [FrankenPHP](https://frankenphp.dev/).
+The API run either with [Nginx Unit](https://unit.nginx.org/), [FrankenPHP](https://frankenphp.dev/) or `Nginx+PHP-FPM`.
 
-The workflow examples are taken from the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), and modified for the Symfony framework.
+The workflow examples are taken from the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), and modified to adapt to the Symfony framework.
 
 ### Configuration
 
@@ -25,10 +25,37 @@ Other options are set in the `environment` section of the containers in the `doc
 ### Running the samples
 
 The `docker/temporal-server/docker-compose.yml` file will start the Temporal server.
-It is the same as in the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), but without the PHP app container.
-It needs to be started before running the Symfony apps.
+It is the same as in the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), but without the PHP application container.
+It needs to be started before running the Symfony applications.
 
-The `docker/temporal-apps/docker-compose.yml` file will start the 3 Symfony apps, which need to connect to the Temporal server, using the address or hostname set in the `environment` section in file.
+The `docker/temporal-apps/docker-compose.yml` file will start the 3 Symfony applications, which need to connect to the Temporal server, using the address or hostname set in the `environment` section in the docker-compose file.
+
+Before starting the applications, first build the containers, then install the PHP packages in each container with `Composer`..
+
+```bash
+cd docker/temporal-apps/
+
+docker-compose build
+docker-compose run --rm --user temporal activity-worker composer install
+docker-compose run --rm --user temporal workflow-worker composer install
+docker-compose run --rm --user temporal workflow-api composer install
+
+docker-compose up -d
+```
+
+By default, the `workflow-api` app will be started in the `Nginx Unit` container.
+The other application servers (PHP-FPM and FrankenPHP) can be enabled by uncommenting their definition in the `docker-compose.yml` file.
+
+Each application server is configured to be available on a separate port:
+- Nginx Unit: http://localhost:9300
+- FrankenPHP: http://localhost:9301
+- Nginx+PHP-FPM: http://localhost:9302
+
+### Swagger
+
+The `workflow-api` app also provides a [Swagger](https://swagger.io/) powered webpage to call its endpoints, which are listed in the `temporal-apps/workflow-api/config/packages/nelmio_api_doc.yaml` file.
+
+The page will be available at [http://localhost:9300/api/doc](http://localhost:9300/api/doc).
 
 ## How it works
 
@@ -43,10 +70,7 @@ Many examples of these can be found in the [Temporal PHP SDK sampes](https://git
 
 In the Symfony applications, the workflow and activity classes are located in the `src\Workflow\Service\Workflow` and `src\Workflow\Service\Activity` subdirs. Of course, their namespaces are changed accordingly.
 
-- The workflow interfaces must be deployed on the `workflow-api` and `workflow-worker` apps.
-- The workflow classes must be deployed only on the `workflow-worker` app.
-- The activity interfaces must be deployed on the `activity-worker` and `workflow-worker` apps.
-- The activity classes must be deployed only on the `activity-worker` app.
+See the `Summary` section below for how to deploy the workflows and activities code in the Symfony apps.
 
 The workflow and activity classes must be tagged resp. with `temporal.service.workflow` and `temporal.service.activity` in the Symfony service container, so they are automatically registered to the Temporal server.
 
@@ -60,7 +84,7 @@ It can be supposed that they implement the interfaces of the workflows and activ
 As a consequence, a [facade](https://github.com/lagdo/symfony-facades) is used anytime a call to a workflow or an activity function needs to be made.
 That means:
 - When a workflow is started or called in the `workflow-api` app.
-- When an actiivity is called or a child workflow started in the `workflow-worker` app.
+- When an activity is called or a child workflow started in the `workflow-worker` app.
 
 In summary, a facade will use a workflow or activity interface as service identifier, and forward its calls to a Temporal stub that it has picked in the Symfony service container.
 
@@ -134,7 +158,7 @@ class MoneyBatchWorkflow implements MoneyBatchWorkflowInterface
 
 2. For a main workflow,
 
-    - Define the workflow options and add an attribute to the workflow interface in the `workflow-api` app.
+- Define the workflow options and add an attribute to the workflow interface in the `workflow-api` app.
 
 In the `temporal-apps\workflow-api\config\temporal\services.yaml` file,
 
@@ -159,8 +183,7 @@ interface MoneyBatchWorkflowInterface
 {
 }
 ```
-
-    - Add the workflow facade in the `workflow-api` app.
+- Add the workflow facade in the `workflow-api` app.
 
 In the `temporal-apps\workflow-api\src\Workflow\Service\Workflow\MoneyBatch\MoneyBatchWorkflowFacade.php` file,
 
@@ -184,13 +207,57 @@ class MoneyBatchWorkflowFacade extends AbstractFacade
 }
 ```
 
-The `WorkflowClientTrait` trait provides helper functions to start a new workflow and get a running workflow.
+The `WorkflowClientTrait` trait provides additional helper functions to start a new workflow and get a running workflow.
+See the `temporal-apps\workflow-api\src\Controller\MoneyBatchController.php` file for examples.
 
 3. For a child workflow,
 
-    - Define the workflow options and add an attribute to the workflow interface in the `workflow-worker` app.
+- Define the child workflow options and add an attribute to the workflow interface in the `workflow-worker` app.
 
-    - Add the workflow facade in the `workflow-worker` app.
+In the `temporal-apps\workflow-worker\config\temporal\services.yaml` file,
+
+```yaml
+services:
+    defaultChildWorkflowOptions:
+        class: 'Temporal\Workflow\ChildWorkflowOptions'
+        factory: ['App\Temporal\Factory\WorkflowFactory', 'defaultOptions']
+```
+
+In the `temporal-apps\workflow-worker\src\Workflow\Service\Workflow\Child\ChildWorkflowInterface.php` file,
+
+```php
+namespace App\Workflow\Service\Workflow\Child;
+
+use App\Temporal\Attribute\ChildWorkflowOptions;
+use Temporal\Workflow\WorkflowInterface;
+
+#[WorkflowInterface]
+#[ChildWorkflowOptions(serviceId: "defaultChildWorkflowOptions")]
+interface ChildWorkflowInterface
+{
+}
+```
+
+- Add the child workflow facade in the `workflow-worker` app.
+
+In the `temporal-apps\workflow-worker\src\Workflow\Service\Workflow\Child\ChildWorkflowFacade.php` file,
+
+```php
+namespace App\Workflow\Service\Workflow\Child;
+
+use Lagdo\Symfony\Facades\AbstractFacade;
+
+class ChildWorkflowFacade extends AbstractFacade
+{
+    /**
+     * @inheritDoc
+     */
+    protected static function getServiceIdentifier(): string
+    {
+        return ChildWorkflowInterface::class;
+    }
+}
+```
 
 #### For the activity
 
@@ -281,3 +348,5 @@ class AccountActivityFacade extends AbstractFacade
 ### PHP application servers
 
 ### Credits
+
+https://github.com/pabloripoll/docker-php-8.3-service

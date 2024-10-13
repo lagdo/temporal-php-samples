@@ -1,9 +1,8 @@
 ARG ALPINE_VERSION=3.19
-ARG UNIT_VERSION=1.33.0
 ARG PHP_VERSION=8.3
 
 FROM alpine:${ALPINE_VERSION}
-FROM unit:${UNIT_VERSION}-php${PHP_VERSION}
+FROM php:${PHP_VERSION}-alpine
 
 # Setup unique user and group - needs bash
 RUN apk add --no-cache bash
@@ -75,7 +74,10 @@ RUN apk add --no-cache \
   ${PHP_V}-pecl-xdebug \
   # GRPC and Protobuf extensions
   ${PHP_V}-pecl-protobuf \
-  ${PHP_V}-pecl-grpc
+  ${PHP_V}-pecl-grpc \
+  # Nginx Unit
+  unit \
+  unit-${PHP_V}
 
 # PHP Docker
 RUN docker-php-ext-install pdo pdo_mysql gd
@@ -85,6 +87,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Configure PHP
 COPY workflow-api/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
+
+# Configure Nginx Unit
+COPY workflow-api/nginx-unit/config/www.json /docker-entrypoint.d/config.json
+COPY workflow-api/nginx-unit/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 # Make sure files/folders needed by the processes are accessible
 RUN chown -R ${PHP_USER}.${PHP_USER} /var/www

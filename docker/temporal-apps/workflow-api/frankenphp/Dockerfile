@@ -1,8 +1,7 @@
-ARG ALPINE_VERSION=3.19
+ARG FRANKENPHP_VERSION=1.2.5
 ARG PHP_VERSION=8.3
 
-FROM alpine:${ALPINE_VERSION}
-FROM php:${PHP_VERSION}-alpine
+FROM dunglas/frankenphp:${FRANKENPHP_VERSION}-php${PHP_VERSION}-alpine
 
 # Setup unique user and group - needs bash
 RUN apk add --no-cache bash
@@ -22,10 +21,18 @@ RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
   install-php-extensions @composer-2 opcache zip intl sockets protobuf grpc
 
-# Create project root
-RUN mkdir -p /var/www
+# Be sure to replace "your-domain-name.example.com" by your domain name
+# ENV SERVER_NAME=your-domain-name.example.com
+# If you want to disable HTTPS, use this value instead:
+ENV SERVER_NAME=:80
 
-WORKDIR /var/www
+# Enable PHP production settings
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+# Create project root
+RUN mkdir -p /app
+
+WORKDIR /app
 
 # Install main packages and remove default server definition
 RUN apk add --no-cache curl wget zip vim git
@@ -83,7 +90,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY workflow-api/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
 
 # Make sure files/folders needed by the processes are accessible
-RUN chown -R ${PHP_USER}.${PHP_USER} /var/www
+RUN chown -R ${PHP_USER}.${PHP_USER} /app /data/caddy /config/caddy
+
+# Add additional capability to bind to port 80 and 443
+RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp
 
 # Switch to use a non-root user from here on
 USER ${PHP_USER}

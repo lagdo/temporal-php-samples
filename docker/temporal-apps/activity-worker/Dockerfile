@@ -39,6 +39,7 @@ ENV PHP_V="php83"
 
 RUN apk add --no-cache \
   ${PHP_V} \
+  ${PHP_V}-bcmath \
   ${PHP_V}-cli \
   ${PHP_V}-ctype \
   ${PHP_V}-curl \
@@ -51,12 +52,12 @@ RUN apk add --no-cache \
   ${PHP_V}-openssl \
   ${PHP_V}-phar \
   ${PHP_V}-session \
-  ${PHP_V}-tokenizer \
+  ${PHP_V}-simplexml \
   ${PHP_V}-soap \
+  ${PHP_V}-tokenizer \
   ${PHP_V}-xml \
   ${PHP_V}-xmlreader \
   ${PHP_V}-xmlwriter \
-  ${PHP_V}-simplexml \
   ${PHP_V}-zip \
   # Database
   ${PHP_V}-pdo \
@@ -79,11 +80,11 @@ RUN apk add --no-cache \
 # PHP Docker
 RUN docker-php-ext-install pdo pdo_mysql gd
 
-# Configure PHP
-COPY activity-worker/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
-
 # PHP Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Configure PHP
+COPY activity-worker/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
 
 # RoadRunner
 COPY --from=roadrunner /usr/bin/rr /usr/local/bin/rr

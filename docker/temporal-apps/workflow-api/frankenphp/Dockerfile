@@ -38,6 +38,7 @@ ENV PHP_V="php83"
 
 RUN apk add --no-cache \
   ${PHP_V} \
+  ${PHP_V}-bcmath \
   ${PHP_V}-cli \
   ${PHP_V}-ctype \
   ${PHP_V}-curl \
@@ -50,12 +51,12 @@ RUN apk add --no-cache \
   ${PHP_V}-openssl \
   ${PHP_V}-phar \
   ${PHP_V}-session \
-  ${PHP_V}-tokenizer \
+  ${PHP_V}-simplexml \
   ${PHP_V}-soap \
+  ${PHP_V}-tokenizer \
   ${PHP_V}-xml \
   ${PHP_V}-xmlreader \
   ${PHP_V}-xmlwriter \
-  ${PHP_V}-simplexml \
   ${PHP_V}-zip \
   # Database
   ${PHP_V}-pdo \
@@ -73,11 +74,13 @@ RUN apk add --no-cache \
   ${PHP_V}-pecl-xdebug
 
 # PHP Docker
-RUN docker-php-ext-install pdo pdo_mysql gd \
-  && docker-php-ext-enable protobuf grpc
+RUN docker-php-ext-install pdo pdo_mysql gd
 
 # PHP Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Configure PHP
+COPY workflow-api/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
 
 # Make sure files/folders needed by the processes are accessible
 RUN chown -R ${PHP_USER}.${PHP_USER} /var/www

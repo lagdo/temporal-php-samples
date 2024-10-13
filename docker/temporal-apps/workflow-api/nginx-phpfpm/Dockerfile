@@ -38,12 +38,12 @@ ENV PHP_V="php83"
 
 RUN apk add --no-cache \
   ${PHP_V} \
+  ${PHP_V}-bcmath \
   ${PHP_V}-cli \
   ${PHP_V}-ctype \
   ${PHP_V}-curl \
   ${PHP_V}-dom \
   ${PHP_V}-fileinfo \
-  ${PHP_V}-fpm \
   ${PHP_V}-gd \
   ${PHP_V}-intl \
   ${PHP_V}-mbstring \
@@ -51,12 +51,12 @@ RUN apk add --no-cache \
   ${PHP_V}-openssl \
   ${PHP_V}-phar \
   ${PHP_V}-session \
-  ${PHP_V}-tokenizer \
+  ${PHP_V}-simplexml \
   ${PHP_V}-soap \
+  ${PHP_V}-tokenizer \
   ${PHP_V}-xml \
   ${PHP_V}-xmlreader \
   ${PHP_V}-xmlwriter \
-  ${PHP_V}-simplexml \
   ${PHP_V}-zip \
   # Database
   ${PHP_V}-pdo \
@@ -74,13 +74,20 @@ RUN apk add --no-cache \
   ${PHP_V}-pecl-xdebug \
   # GRPC and Protobuf extensions
   ${PHP_V}-pecl-protobuf \
-  ${PHP_V}-pecl-grpc
+  ${PHP_V}-pecl-grpc \
+  # PHP FPM
+  ${PHP_V}-fpm
 
 # PHP Docker
 RUN docker-php-ext-install pdo pdo_mysql gd
 
+# PHP Composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Configure PHP
+COPY workflow-api/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
+
 # Configure PHP-FPM
-COPY workflow-api/nginx-phpfpm/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
 COPY workflow-api/nginx-phpfpm/config/www.conf /etc/${PHP_V}/php-fpm.d/www.conf
 
 # Configure Nginx - http
@@ -91,9 +98,6 @@ COPY workflow-api/nginx-phpfpm/config/conf.d /etc/nginx/conf.d/
 
 # Configure Supervisord
 COPY workflow-api/nginx-phpfpm/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# PHP Composer
-COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Make sure files/folders needed by the processes are accessible
 RUN chown -R ${PHP_USER}.${PHP_USER} /var/www /run /var/lib/nginx /var/log/nginx

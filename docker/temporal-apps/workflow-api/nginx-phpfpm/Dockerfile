@@ -4,9 +4,6 @@ ARG PHP_VERSION=8.3
 FROM alpine:${ALPINE_VERSION}
 FROM php:${PHP_VERSION}-alpine
 
-# Setup unique user and group - needs bash
-RUN apk add --no-cache bash
-
 ARG PHP_USER
 ARG PHP_UID
 ARG PHP_GID
@@ -14,24 +11,9 @@ ENV PHP_USER=${PHP_USER}
 ENV PHP_UID=${PHP_UID}
 ENV PHP_GID=${PHP_GID}
 
-RUN addgroup -g ${PHP_GID} --system ${PHP_USER}
-RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
-
-# https://github.com/mlocati/docker-php-extension-installer
-# https://github.com/docker-library/docs/tree/0fbef0e8b8c403f581b794030f9180a68935af9d/php#how-to-install-more-php-extensions
-RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions @composer-2 opcache zip intl sockets protobuf grpc
-
-# Create project root
-RUN mkdir -p /var/www
-
-WORKDIR /var/www
-
-# Install main packages and remove default server definition
-RUN apk add --no-cache curl wget zip vim git nginx supervisor
-
 RUN set -xe && apk add --no-cache --virtual .build-deps \
-  libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
+  libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev \
+  patch openssh-client bash curl wget zip vim git nginx supervisor
 
 # Install PHP and its extensions packages and remove default server definition
 ENV PHP_V="php83"
@@ -75,17 +57,14 @@ RUN apk add --no-cache \
   # GRPC and Protobuf extensions
   ${PHP_V}-pecl-protobuf \
   ${PHP_V}-pecl-grpc \
-  # PHP FPM
+  # PHP-FPM
   ${PHP_V}-fpm
 
-# PHP Docker
-RUN docker-php-ext-install pdo pdo_mysql gd
+# Create symlink for php-fpm
+RUN ln -s /usr/sbin/php-fpm83 /usr/sbin/php-fpm
 
 # PHP Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-
-# Configure PHP
-COPY workflow-api/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
 
 # Configure PHP-FPM
 COPY workflow-api/nginx-phpfpm/config/www.conf /etc/${PHP_V}/php-fpm.d/www.conf
@@ -99,8 +78,16 @@ COPY workflow-api/nginx-phpfpm/config/conf.d /etc/nginx/conf.d/
 # Configure Supervisord
 COPY workflow-api/nginx-phpfpm/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+RUN addgroup -g ${PHP_GID} --system ${PHP_USER}
+RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
+
+# Create project root
+RUN mkdir -p /var/www
+
 # Make sure files/folders needed by the processes are accessible
-RUN chown -R ${PHP_USER}.${PHP_USER} /var/www /run /var/lib/nginx /var/log/nginx
+RUN chown -R ${PHP_USER}.${PHP_USER} /var/www /run /var/log /var/lib/nginx /var/log/nginx
 
 # Switch to use a non-root user from here on
 USER ${PHP_USER}
+
+WORKDIR /var/www

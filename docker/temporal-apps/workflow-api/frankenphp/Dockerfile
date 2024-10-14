@@ -3,23 +3,12 @@ ARG PHP_VERSION=8.3
 
 FROM dunglas/frankenphp:${FRANKENPHP_VERSION}-php${PHP_VERSION}-alpine
 
-# Setup unique user and group - needs bash
-RUN apk add --no-cache bash
-
 ARG PHP_USER
 ARG PHP_UID
 ARG PHP_GID
 ENV PHP_USER=${PHP_USER}
 ENV PHP_UID=${PHP_UID}
 ENV PHP_GID=${PHP_GID}
-
-RUN addgroup -g ${PHP_GID} --system ${PHP_USER}
-RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
-
-# https://github.com/mlocati/docker-php-extension-installer
-# https://github.com/docker-library/docs/tree/0fbef0e8b8c403f581b794030f9180a68935af9d/php#how-to-install-more-php-extensions
-RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions @composer-2 opcache zip intl sockets protobuf grpc
 
 # Be sure to replace "your-domain-name.example.com" by your domain name
 # ENV SERVER_NAME=your-domain-name.example.com
@@ -29,65 +18,30 @@ ENV SERVER_NAME=:80
 # Enable PHP production settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Create project root
-RUN mkdir -p /app
-
-WORKDIR /app
-
-# Install main packages and remove default server definition
-RUN apk add --no-cache curl wget zip vim git
+# Setup unique user and group - needs bash
+RUN apk add --no-cache bash curl wget zip vim git
 
 RUN set -xe && apk add --no-cache --virtual .build-deps \
   libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
 
-# Install PHP and its extensions packages and remove default server definition
-ENV PHP_V="php83"
+RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+  install-php-extensions opcache zip intl sockets protobuf grpc
 
-RUN apk add --no-cache \
-  ${PHP_V} \
-  ${PHP_V}-bcmath \
-  ${PHP_V}-cli \
-  ${PHP_V}-ctype \
-  ${PHP_V}-curl \
-  ${PHP_V}-dom \
-  ${PHP_V}-fileinfo \
-  ${PHP_V}-gd \
-  ${PHP_V}-intl \
-  ${PHP_V}-mbstring \
-  ${PHP_V}-opcache \
-  ${PHP_V}-openssl \
-  ${PHP_V}-phar \
-  ${PHP_V}-session \
-  ${PHP_V}-simplexml \
-  ${PHP_V}-soap \
-  ${PHP_V}-tokenizer \
-  ${PHP_V}-xml \
-  ${PHP_V}-xmlreader \
-  ${PHP_V}-xmlwriter \
-  ${PHP_V}-zip \
+RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+  install-php-extensions bcmath ctype curl dom fileinfo gd mbstring opcache openssl phar redis tokenizer zip \
   # Database
-  ${PHP_V}-pdo \
-  ${PHP_V}-pdo_sqlite \
-  ${PHP_V}-sqlite3 \
-  ${PHP_V}-pdo_mysql \
-  ${PHP_V}-mysqlnd \
-  ${PHP_V}-mysqli \
-  ${PHP_V}-pdo_pgsql \
-  ${PHP_V}-pgsql \
-  ${PHP_V}-mongodb \
-  ${PHP_V}-redis \
+  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql mongodb \
   # PHP PECL extensions
-  ${PHP_V}-pecl-amqp \
-  ${PHP_V}-pecl-xdebug
-
-# PHP Docker
-RUN docker-php-ext-install pdo pdo_mysql gd
+  amqp xdebug
 
 # PHP Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Configure PHP
-COPY workflow-api/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
+RUN addgroup -g ${PHP_GID} --system ${PHP_USER}
+RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
+
+# Create project root
+RUN mkdir -p /app
 
 # Make sure files/folders needed by the processes are accessible
 RUN chown -R ${PHP_USER}.${PHP_USER} /app /data/caddy /config/caddy
@@ -97,3 +51,5 @@ RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp
 
 # Switch to use a non-root user from here on
 USER ${PHP_USER}
+
+WORKDIR /app

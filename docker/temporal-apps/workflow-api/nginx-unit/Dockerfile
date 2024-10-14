@@ -4,9 +4,6 @@ ARG PHP_VERSION=8.3
 FROM alpine:${ALPINE_VERSION}
 FROM php:${PHP_VERSION}-alpine
 
-# Setup unique user and group - needs bash
-RUN apk add --no-cache bash
-
 ARG PHP_USER
 ARG PHP_UID
 ARG PHP_GID
@@ -14,21 +11,8 @@ ENV PHP_USER=${PHP_USER}
 ENV PHP_UID=${PHP_UID}
 ENV PHP_GID=${PHP_GID}
 
-RUN addgroup -g ${PHP_GID} --system ${PHP_USER}
-RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
-
-# https://github.com/mlocati/docker-php-extension-installer
-# https://github.com/docker-library/docs/tree/0fbef0e8b8c403f581b794030f9180a68935af9d/php#how-to-install-more-php-extensions
-RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions @composer-2 opcache zip intl sockets protobuf grpc
-
-# Create project root
-RUN mkdir -p /var/www
-
-WORKDIR /var/www
-
-# Install main packages and remove default server definition
-RUN apk add --no-cache curl wget zip vim git
+# Setup unique user and group - needs bash
+RUN apk add --no-cache bash curl wget zip vim git
 
 RUN set -xe && apk add --no-cache --virtual .build-deps \
   libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
@@ -79,14 +63,8 @@ RUN apk add --no-cache \
   unit \
   unit-${PHP_V}
 
-# PHP Docker
-RUN docker-php-ext-install pdo pdo_mysql gd
-
 # PHP Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-
-# Configure PHP
-COPY workflow-api/config/grpc.ini /etc/${PHP_V}/conf.d/20_grpc.ini
 
 # Configure Nginx Unit
 COPY workflow-api/nginx-unit/config/www.json /docker-entrypoint.d/config.json
@@ -94,5 +72,13 @@ COPY workflow-api/nginx-unit/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
+RUN addgroup -g ${PHP_GID} --system ${PHP_USER}
+RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
+
+# Create project root
+RUN mkdir -p /var/www
+
 # Make sure files/folders needed by the processes are accessible
 RUN chown -R ${PHP_USER}.${PHP_USER} /var/www
+
+WORKDIR /var/www

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Workflow\Library\WorkflowClient;
 use App\Workflow\Service\Workflow\MoneyBatch\MoneyBatchWorkflowFacade;
 use App\Workflow\Service\Workflow\MoneyBatch\MoneyBatchWorkflowInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +35,18 @@ class MoneyBatchController extends AbstractController
     }
 
     #[Route(
+        '/workflows/{workflowId}/{runId}/events',
+        name: 'get_workflow_events',
+        methods: [Request::METHOD_GET]
+    )]
+    public function getEvents(WorkflowClient $workflowClient, string $workflowId, string $runId): JsonResponse
+    {
+        return $this->json([
+            'events' => $workflowClient->getWorkflowEvents($workflowId, $runId),
+        ]);
+    }
+
+    #[Route(
         '/workflows/{workflowId}/_status',
         name: 'get_workflow_status',
         methods: [Request::METHOD_GET]
@@ -44,7 +57,7 @@ class MoneyBatchController extends AbstractController
         $workflow = MoneyBatchWorkflowFacade::getRunningWorkflow($workflowId);
 
         return $this->json([
-            'count'=> $workflow->getCount(),
+            'count' => $workflow->getCount(),
             'balance' => $workflow->getBalance(),
         ]);
     }

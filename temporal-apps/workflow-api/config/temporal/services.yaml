@@ -5,9 +5,14 @@ parameters:
 services:
     # default configuration for services in *this* file
     _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
         bind:
             # Queue for the workflow workers
             $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
+
+    # Workflow library
+    App\Workflow\Library\:
+        resource: '../../src/Workflow/Library/'
 
     # Application workflows
     App\Workflow\Service\Workflow\:

@@ -28,13 +28,18 @@ class ActivityCompilerPass implements CompilerPassInterface
         foreach($activities as $activity => $_)
         {
             $activityClass = new ReflectionClass($activity);
-            $activityInterface = $this->getInterfaceFromFacade($activityClass);
-            if($activityInterface !== null)
+            if(!$activityClass->isSubclassOf(AbstractFacade::class))
+            {
+                continue;
+            }
+    
+            // A facade doesn't need to be registered in the service container.
+            $container->removeDefinition($activity);
+
+            if(($activityInterface = $this->getInterfaceFromFacade($activityClass)) !== null)
             {
                 // The class is a facade. Register a activity stub.
                 $this->registerActivityStub($container, $activityInterface);
-                // A facade doesn't need to be registered in the service container.
-                $container->removeDefinition($activity);
             }
         }
     }
@@ -46,11 +51,6 @@ class ActivityCompilerPass implements CompilerPassInterface
      */
     private function getInterfaceFromFacade(ReflectionClass $activityClass): ?ReflectionClass
     {
-        if(!$activityClass->isSubclassOf(AbstractFacade::class))
-        {
-            return null;
-        }
-
         // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
         $serviceIdentifierMethod = $activityClass->getMethod('getServiceIdentifier');
         $serviceIdentifierMethod->setAccessible(true);

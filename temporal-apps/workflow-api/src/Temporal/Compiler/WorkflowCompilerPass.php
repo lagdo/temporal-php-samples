@@ -29,13 +29,18 @@ class WorkflowCompilerPass implements CompilerPassInterface
         foreach($workflows as $workflow => $_)
         {
             $workflowClass = new ReflectionClass($workflow);
-            $workflowInterface = $this->getInterfaceFromFacade($workflowClass);
-            if($workflowInterface !== null)
+            if(!$workflowClass->isSubclassOf(AbstractFacade::class))
+            {
+                continue;
+            }
+    
+            // A facade doesn't need to be registered in the service container.
+            $container->removeDefinition($workflow);
+
+            if(($workflowInterface = $this->getInterfaceFromFacade($workflowClass)) !== null)
             {
                 // The class is a facade. Register a workflow stub.
                 $this->registerWorkflowStub($container, $workflowInterface);
-                // A facade doesn't need to be registered in the service container.
-                $container->removeDefinition($workflow);
             }
         }
     }
@@ -47,11 +52,6 @@ class WorkflowCompilerPass implements CompilerPassInterface
      */
     private function getInterfaceFromFacade(ReflectionClass $workflowClass): ?ReflectionClass
     {
-        if(!$workflowClass->isSubclassOf(AbstractFacade::class))
-        {
-            return null;
-        }
-
         // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
         $serviceIdentifierMethod = $workflowClass->getMethod('getServiceIdentifier');
         $serviceIdentifierMethod->setAccessible(true);

@@ -34,13 +34,14 @@ class WorkflowCompilerPass implements CompilerPassInterface
                 $runtimeDefinition->addMethodCall('addWorkflow', [$workflow]);
                 continue;
             }
-            $workflowInterface = $this->getInterfaceFromFacade($workflowClass);
-            if($workflowInterface !== null)
+
+            // A facade doesn't need to be registered in the service container.
+            $container->removeDefinition($workflow);
+
+            if(($workflowInterface = $this->getInterfaceFromFacade($workflowClass)) !== null)
             {
                 // The class is a facade. Register a child workflow stub.
                 $this->registerChildWorkflowStub($container, $workflowInterface);
-                // A facade doesn't need to be registered in the service container.
-                $container->removeDefinition($workflow);
             }
         }
     }
@@ -52,11 +53,6 @@ class WorkflowCompilerPass implements CompilerPassInterface
      */
     private function getInterfaceFromFacade(ReflectionClass $workflowClass): ?ReflectionClass
     {
-        if(!$workflowClass->isSubclassOf(AbstractFacade::class))
-        {
-            return null;
-        }
-
         // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
         $serviceIdentifierMethod = $workflowClass->getMethod('getServiceIdentifier');
         $serviceIdentifierMethod->setAccessible(true);

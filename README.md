@@ -103,6 +103,23 @@ In the Symfony apps, the workflow and activity options are defined in the `confi
         factory: ['App\Temporal\Factory\WorkflowFactory', 'moneyBatchOptions']
 ```
 
+```php
+namespace App\Temporal\Factory;
+
+use Carbon\CarbonInterval;
+use Temporal\Client\WorkflowOptions;
+
+class WorkflowFactory
+{
+    public static function moneyBatchOptions(string $workflowTaskQueue): WorkflowOptions
+    {
+        return WorkflowOptions::new()
+            ->withTaskQueue($workflowTaskQueue)
+            ->withWorkflowExecutionTimeout(CarbonInterval::hour());
+    }
+}
+```
+
 The options are then applied to a stub (or a facade) using an attribute on the corresponding interface.
 
 ```php
@@ -159,6 +176,25 @@ class MoneyBatchWorkflow implements MoneyBatchWorkflowInterface
 
 - Define the workflow options and add an attribute to the workflow interface in the `workflow-api` app.
 
+In the `src/Temporal/Factory/WorkflowFactory.php` file,
+
+```php
+namespace App\Temporal\Factory;
+
+use Carbon\CarbonInterval;
+use Temporal\Client\WorkflowOptions;
+
+class WorkflowFactory
+{
+    public static function moneyBatchOptions(string $workflowTaskQueue): WorkflowOptions
+    {
+        return WorkflowOptions::new()
+            ->withTaskQueue($workflowTaskQueue)
+            ->withWorkflowExecutionTimeout(CarbonInterval::hour());
+    }
+}
+```
+
 In the `config\temporal\services.yaml` file,
 
 ```yaml
@@ -212,6 +248,23 @@ See the `src\Controller\MoneyBatchController.php` file for examples.
 3. For a child workflow,
 
 - Define the child workflow options and add an attribute to the workflow interface in the `workflow-worker` app.
+
+In the `src/Temporal/Factory/WorkflowFactory.php` file,
+
+```php
+namespace App\Temporal\Factory;
+
+use Temporal\Workflow\ChildWorkflowOptions;
+
+class WorkflowFactory
+{
+    public static function defaultOptions(string $workflowTaskQueue): ChildWorkflowOptions
+    {
+        return ChildWorkflowOptions::new()
+            ->withTaskQueue($workflowTaskQueue);
+    }
+}
+```
 
 In the `config\temporal\services.yaml` file,
 
@@ -286,6 +339,33 @@ class AccountActivity implements AccountActivityInterface
 ```
 
 2. Define the activity options and add an attribute to the activity interface in the `workflow-worker` app.
+
+In the `src/Temporal/Factory/ActivityFactory.php` file,
+
+```php
+namespace App\Temporal\Factory;
+
+use Carbon\CarbonInterval;
+use Temporal\Activity\ActivityOptions;
+use Temporal\Common\RetryOptions;
+
+class ActivityFactory
+{
+    public static function moneyBatchOptions(string $activityTaskQueue): ActivityOptions
+    {
+        return ActivityOptions::new()
+            ->withTaskQueue($activityTaskQueue)
+            ->withStartToCloseTimeout(CarbonInterval::seconds(15))
+            ->withScheduleToCloseTimeout(CarbonInterval::hour(1))
+            ->withRetryOptions(
+                RetryOptions::new()
+                    ->withMaximumAttempts(10)
+                    ->withInitialInterval(CarbonInterval::second(1))
+                    ->withMaximumInterval(CarbonInterval::seconds(10))
+            );
+    }
+}
+```
 
 In the `config\temporal\services.yaml` file,
 

@@ -11,34 +11,13 @@ nelmio_api_doc:
             description: Sample Symfony apps to run an API and workers for Temporal workflows.
             version: 0.0.1
         paths:
-            /api/greeting/workflows:
-                post:
-                    summary: 'Start a greeting workflow'
-                    description: 'Start a greeting workflow'
-                    operationId: api_simple_activity_start_workflow
-                    tags:
-                        - "Simple activity"
-                    requestBody:
-                        description: The workflow parameters
-                        required: true
-                        content:
-                            application/json:
-                                schema:
-                                    $ref: "#/components/schemas/Greet"
-                    responses:
-                        "200":
-                            description: Workflow successfully started
-                            content:
-                                application/json:
-                                    schema:
-                                        $ref: "#/components/schemas/WorkflowIds"
-            /api/greeting/workflows/{workflowId}/{runId}/events:
+            /api/workflows/{workflowId}/{runId}/events:
                 get:
-                    summary: 'Get the greeting workflow events'
-                    description: 'Get the greeting workflow events'
-                    operationId: api_simple_activity_get_workflow_events
+                    summary: 'Get workflow events'
+                    description: 'Get workflow events'
+                    operationId: api_get_workflow_events
                     tags:
-                        - "Simple activity"
+                        - "Workflow"
                     parameters:
                         -
                             in: path
@@ -61,6 +40,27 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: "#/components/schemas/WorkflowEventResponse"
+            /api/greeting/workflows:
+                post:
+                    summary: 'Start a greeting workflow'
+                    description: 'Start a greeting workflow'
+                    operationId: api_simple_activity_start_workflow
+                    tags:
+                        - "Simple activity"
+                    requestBody:
+                        description: The workflow parameters
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "#/components/schemas/Greet"
+                    responses:
+                        "200":
+                            description: Workflow successfully started
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/WorkflowIds"
             /api/parent/workflows:
                 post:
                     summary: 'Start a parent workflow'
@@ -82,35 +82,6 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: "#/components/schemas/WorkflowIds"
-            /api/parent/workflows/{workflowId}/{runId}/events:
-                get:
-                    summary: 'Get the parent workflow events'
-                    description: 'Get the parent workflow events'
-                    operationId: api_parent_get_workflow_events
-                    tags:
-                        - "Parent/Child workflow"
-                    parameters:
-                        -
-                            in: path
-                            name: workflowId
-                            required: true
-                            description: The workflow id
-                            schema:
-                                type: string
-                        -
-                            in: path
-                            name: runId
-                            required: true
-                            description: The run id
-                            schema:
-                                type: string
-                    responses:
-                        "200":
-                            description: The parent workflow events
-                            content:
-                                application/json:
-                                    schema:
-                                        $ref: "#/components/schemas/WorkflowEventResponse"
             /api/money/transfer/workflows:
                 post:
                     summary: 'Start a money transfer workflow'
@@ -132,35 +103,6 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: "#/components/schemas/WorkflowIds"
-            /api/money/transfer/workflows/{workflowId}/{runId}/events:
-                get:
-                    summary: 'Get the money transfer workflow events'
-                    description: 'Get the money transfer workflow events'
-                    operationId: api_money_transfer_get_workflow_events
-                    tags:
-                        - "Money transfer"
-                    parameters:
-                        -
-                            in: path
-                            name: workflowId
-                            required: true
-                            description: The workflow id
-                            schema:
-                                type: string
-                        -
-                            in: path
-                            name: runId
-                            required: true
-                            description: The run id
-                            schema:
-                                type: string
-                    responses:
-                        "200":
-                            description: The money transfer workflow events
-                            content:
-                                application/json:
-                                    schema:
-                                        $ref: "#/components/schemas/WorkflowEventResponse"
             /api/money/batch/workflows:
                 post:
                     summary: 'Start a money batch workflow'
@@ -182,35 +124,6 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: "#/components/schemas/WorkflowIds"
-            /api/money/batch/workflows/{workflowId}/{runId}/events:
-                get:
-                    summary: 'Get the money batch workflow events'
-                    description: 'Get the money batch workflow events'
-                    operationId: api_money_batch_get_workflow_events
-                    tags:
-                        - "Money batch"
-                    parameters:
-                        -
-                            in: path
-                            name: workflowId
-                            required: true
-                            description: The workflow id
-                            schema:
-                                type: string
-                        -
-                            in: path
-                            name: runId
-                            required: true
-                            description: The run id
-                            schema:
-                                type: string
-                    responses:
-                        "200":
-                            description: The money batch workflow events
-                            content:
-                                application/json:
-                                    schema:
-                                        $ref: "#/components/schemas/WorkflowEventResponse"
             /api/money/batch/workflows/{workflowId}/_status:
                 get:
                     summary: 'Get a money batch workflow status'

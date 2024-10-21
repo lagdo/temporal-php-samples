@@ -18,7 +18,6 @@ ENV SERVER_NAME=:80
 # Enable PHP production settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# Setup unique user and group - needs bash
 RUN apk add --no-cache bash curl wget zip vim git
 
 RUN set -xe && apk add --no-cache --virtual .build-deps \

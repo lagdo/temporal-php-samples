@@ -1,8 +1,38 @@
 ARG ALPINE_VERSION=3.19
 ARG PHP_VERSION=8.3
+ARG UNIT_VERSION=1.33.0
 
+# Nginx Unit downloader
+FROM alpine:${ALPINE_VERSION} AS nginx-unit-downloader
+
+ARG UNIT_VERSION
+WORKDIR "/tmp/unit"
+ADD ["https://codeload.github.com/nginx/unit/tar.gz/refs/tags/${UNIT_VERSION}", "/tmp/unit.tar.gz"]
+RUN tar zxvf /tmp/unit.tar.gz --strip=1 -C "/tmp/unit"
+
+# Nginx Unit builder
+ARG PHP_VERSION
+ARG ALPINE_VERSION
+FROM php:${PHP_VERSION}-zts-alpine${ALPINE_VERSION} AS nginx-unit-builder
+
+RUN set -eux \
+  && apk add --update --no-cache alpine-sdk curl openssl-dev pcre-dev
+
+COPY --from=nginx-unit-downloader ["/tmp/unit", "/build/unit/"]
+ENV DESTDIR /opt/unit/
+WORKDIR "/build/unit/"
+ARG PHP_VERSION
+
+RUN set -eux \
+  && ./configure --log=/var/log/unitd.log \
+  && ./configure php --module="php" \
+  && make -j "$(nproc)" \
+  && make -j "$(nproc)" install \
+  && make clean
+
+# Root builder
 FROM alpine:${ALPINE_VERSION}
-FROM php:${PHP_VERSION}-alpine
+FROM php:${PHP_VERSION}-zts-alpine
 
 ARG PHP_USER
 ARG PHP_UID
@@ -11,57 +41,24 @@ ENV PHP_USER=${PHP_USER}
 ENV PHP_UID=${PHP_UID}
 ENV PHP_GID=${PHP_GID}
 
-# Setup unique user and group - needs bash
-RUN apk add --no-cache bash curl wget zip vim git
+RUN apk add --no-cache bash curl wget zip vim git nginx supervisor
 
 RUN set -xe && apk add --no-cache --virtual .build-deps \
   libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
 
-# Install PHP and its extensions packages and remove default server definition
-ENV PHP_V="php83"
+RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+  install-php-extensions opcache zip intl sockets protobuf grpc
 
-RUN apk add --no-cache \
-  ${PHP_V} \
-  ${PHP_V}-bcmath \
-  ${PHP_V}-cli \
-  ${PHP_V}-ctype \
-  ${PHP_V}-curl \
-  ${PHP_V}-dom \
-  ${PHP_V}-fileinfo \
-  ${PHP_V}-gd \
-  ${PHP_V}-intl \
-  ${PHP_V}-mbstring \
-  ${PHP_V}-opcache \
-  ${PHP_V}-openssl \
-  ${PHP_V}-phar \
-  ${PHP_V}-session \
-  ${PHP_V}-simplexml \
-  ${PHP_V}-soap \
-  ${PHP_V}-tokenizer \
-  ${PHP_V}-xml \
-  ${PHP_V}-xmlreader \
-  ${PHP_V}-xmlwriter \
-  ${PHP_V}-zip \
+RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+  install-php-extensions bcmath ctype curl dom fileinfo gd mbstring opcache openssl phar redis tokenizer zip \
   # Database
-  ${PHP_V}-pdo \
-  ${PHP_V}-pdo_sqlite \
-  ${PHP_V}-sqlite3 \
-  ${PHP_V}-pdo_mysql \
-  ${PHP_V}-mysqlnd \
-  ${PHP_V}-mysqli \
-  ${PHP_V}-pdo_pgsql \
-  ${PHP_V}-pgsql \
-  ${PHP_V}-mongodb \
-  ${PHP_V}-redis \
+  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql mongodb \
   # PHP PECL extensions
-  ${PHP_V}-pecl-amqp \
-  ${PHP_V}-pecl-xdebug \
-  # GRPC and Protobuf extensions
-  ${PHP_V}-pecl-protobuf \
-  ${PHP_V}-pecl-grpc \
-  # Nginx Unit
-  unit \
-  unit-${PHP_V}
+  amqp xdebug
+
+# Nginx Unit
+COPY --from=nginx-unit-builder ["/opt/unit/", "/opt/unit/"]
+RUN cp -R /opt/unit/usr/local/* /usr/local
 
 # PHP Composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer

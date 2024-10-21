@@ -38,7 +38,7 @@ cd docker/temporal-apps/
 docker-compose build
 docker-compose run --rm --user temporal activity-worker composer install
 docker-compose run --rm --user temporal workflow-worker composer install
-docker-compose run --rm --user temporal workflow-api composer install
+docker-compose run --rm --user temporal workflow-api-nginx-unit composer install
 
 docker-compose up -d
 ```
@@ -435,6 +435,9 @@ Other Temporal Symfony packages
 - https://github.com/highcoreorg/temporal-bundle
 - https://github.com/VantaFinance/temporal-bundle
 - https://github.com/buyanov/symfony-temporal-worker
+
+Docker Nginx Unit PHP
+- https://github.com/N0rthernL1ghts/unit-php
 
 Docker PHP
 - https://github.com/pabloripoll/docker-php-8.3-service

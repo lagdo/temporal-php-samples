@@ -21,7 +21,6 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
-      # - INTERCEPTORS_RR_PATH=/usr/local/bin/rr
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
@@ -49,14 +48,12 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
-      # - INTERCEPTORS_RR_PATH=/usr/local/bin/rr
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
     command: [ "/usr/local/bin/rr", "serve", "-c", "/var/www/rr.yaml" ]
 
-  # workflow-api-nginx-unit:
-  workflow-api:
+  workflow-api-nginx-unit:
     container_name: workflow-api-nginx-unit
     build:
       context: ./
@@ -78,7 +75,6 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
-      # - INTERCEPTORS_RR_PATH=/usr/local/bin/rr
     ports:
       - 9300:80
     extra_hosts:
@@ -108,7 +104,6 @@ services:
   #     - OTEL_PHP_TRACES_PROCESSOR=simple
   #     - TEMPORAL_HOST=temporal.addr
   #     - OTEL_HOST=collector.addr
-  #     # - INTERCEPTORS_RR_PATH=/usr/local/bin/rr
   #   ports:
   #     - 9301:80
   #   extra_hosts:
@@ -137,7 +132,6 @@ services:
   #     - OTEL_PHP_TRACES_PROCESSOR=simple
   #     - TEMPORAL_HOST=temporal.addr
   #     - OTEL_HOST=collector.addr
-  #     # - INTERCEPTORS_RR_PATH=/usr/local/bin/rr
   #   ports:
   #     - 9302:80
   #   extra_hosts:

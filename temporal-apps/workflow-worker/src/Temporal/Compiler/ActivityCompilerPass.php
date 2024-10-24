@@ -6,6 +6,7 @@ use App\Temporal\Attribute\ActivityOptions;
 use App\Temporal\Factory\ActivityFactory;
 use Lagdo\Symfony\Facades\AbstractFacade;
 use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -51,18 +52,21 @@ class ActivityCompilerPass implements CompilerPassInterface
      */
     private function getInterfaceFromFacade(ReflectionClass $activityClass): ?ReflectionClass
     {
-        // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
-        $serviceIdentifierMethod = $activityClass->getMethod('getServiceIdentifier');
-        $serviceIdentifierMethod->setAccessible(true);
-        $activityInterfaceName = $serviceIdentifierMethod->invoke(null);
-        $activityInterface = new ReflectionClass($activityInterfaceName);
-        if(!$activityInterface ||
-            count($activityInterface->getAttributes(ActivityInterface::class)) === 0)
+        try
+        {
+            // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
+            $serviceIdentifierMethod = $activityClass->getMethod('getServiceIdentifier');
+            $serviceIdentifierMethod->setAccessible(true);
+            $activityInterfaceName = $serviceIdentifierMethod->invoke(null);
+            $activityInterface = new ReflectionClass($activityInterfaceName);
+
+            return count($activityInterface->getAttributes(ActivityInterface::class)) === 0 ?
+                null : $activityInterface;
+        }
+        catch(ReflectionException $_)
         {
             return null;
         }
-
-        return $activityInterface;
     }
 
     /**

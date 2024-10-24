@@ -6,6 +6,7 @@ use App\Temporal\Attribute\WorkflowOptions;
 use App\Temporal\Factory\WorkflowFactory;
 use Lagdo\Symfony\Facades\AbstractFacade;
 use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -52,18 +53,21 @@ class WorkflowCompilerPass implements CompilerPassInterface
      */
     private function getInterfaceFromFacade(ReflectionClass $workflowClass): ?ReflectionClass
     {
-        // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
-        $serviceIdentifierMethod = $workflowClass->getMethod('getServiceIdentifier');
-        $serviceIdentifierMethod->setAccessible(true);
-        $workflowInterfaceName = $serviceIdentifierMethod->invoke(null);
-        $workflowInterface = new ReflectionClass($workflowInterfaceName);
-        if(!$workflowInterface ||
-            count($workflowInterface->getAttributes(WorkflowInterface::class)) === 0)
+        try
+        {
+            // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
+            $serviceIdentifierMethod = $workflowClass->getMethod('getServiceIdentifier');
+            $serviceIdentifierMethod->setAccessible(true);
+            $workflowInterfaceName = $serviceIdentifierMethod->invoke(null);
+            $workflowInterface = new ReflectionClass($workflowInterfaceName);
+
+            return count($workflowInterface->getAttributes(WorkflowInterface::class)) === 0 ?
+                null : $workflowInterface;
+        }
+        catch(ReflectionException $_)
         {
             return null;
         }
-
-        return $workflowInterface;
     }
 
     /**

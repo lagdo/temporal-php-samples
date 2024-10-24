@@ -41,7 +41,7 @@ ENV PHP_USER=${PHP_USER}
 ENV PHP_UID=${PHP_UID}
 ENV PHP_GID=${PHP_GID}
 
-RUN apk add --no-cache bash curl wget zip vim git nginx supervisor
+RUN apk add --no-cache bash curl wget zip vim git
 
 RUN set -xe && apk add --no-cache --virtual .build-deps \
   libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client

@@ -12,6 +12,7 @@ services:
 
     # Workflow library
     App\Workflow\Library\:
+        shared: false
         resource: '../../src/Workflow/Library/'
 
     # Application workflows
@@ -22,15 +23,18 @@ services:
 
     # Options for the workflow proxies
     defaultWorkflowOptions:
+        shared: false
         class: 'Temporal\Client\WorkflowOptions'
         factory: ['App\Temporal\Factory\WorkflowFactory', 'defaultOptions']
 
     moneyBatchWorkflowOptions:
+        shared: false
         class: 'Temporal\Client\WorkflowOptions'
         factory: ['App\Temporal\Factory\WorkflowFactory', 'moneyBatchOptions']
 
     # Workflow proxies
     # App\Workflow\Service\Workflow\SimpleActivity\GreetingWorkflowInterface:
+    #     shared: false
     #     public: true
     #     factory: ['App\Temporal\Factory\WorkflowFactory', 'stub']
     #     arguments:

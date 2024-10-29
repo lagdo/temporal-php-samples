@@ -13,6 +13,7 @@ services:
             $activityTaskQueue: '%env(ACTIVITY_TASK_QUEUE)%'
 
     Temporal\OpenTelemetry\Tracer:
+        shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
             $serviceName: 'interceptors-sample-worker'
@@ -24,10 +25,12 @@ services:
     Temporal\Worker\WorkerFactoryInterface: '@Temporal\WorkerFactory'
 
     Temporal\Worker\WorkerInterface:
+        shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'worker']
 
     # Temporal classes
     App\Temporal\:
+        shared: false
         resource: '../../src/Temporal/'
 
     App\Temporal\Runtime\RuntimeInterface: '@App\Temporal\Runtime\Runtime'

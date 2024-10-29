@@ -83,6 +83,7 @@ class ActivityCompilerPass implements CompilerPassInterface
             ->setFactory(ActivityFactory::class . '::activityStub')
             ->setArgument('$activity', $activity)
             ->setArgument('$options', new Reference($optionsKey))
+            ->setShared(false) // A new instance must be returned each time.
             ->setPublic(true); // The facade needs the service to be public.
         $container->setDefinition($activity, $definition);
     }

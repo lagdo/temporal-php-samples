@@ -27,20 +27,24 @@ services:
 
     # Options for the activity proxies
     defaultActivityOptions:
+        shared: false
         class: 'Temporal\Activity\ActivityOptions'
         factory: ['App\Temporal\Factory\ActivityFactory', 'defaultOptions']
 
     moneyBatchActivityOptions:
+        shared: false
         class: 'Temporal\Activity\ActivityOptions'
         factory: ['App\Temporal\Factory\ActivityFactory', 'moneyBatchOptions']
 
     # Options for the workflow proxies
     defaultChildWorkflowOptions:
+        shared: false
         class: 'Temporal\Workflow\ChildWorkflowOptions'
         factory: ['App\Temporal\Factory\WorkflowFactory', 'defaultOptions']
 
     # Activity proxies
     # App\Workflow\Service\Activity\SimpleActivity\GreetingActivityInterface:
+    #     shared: false
     #     public: true
     #     factory: ['App\Temporal\Factory\ActivityFactory', 'stub']
     #     arguments:

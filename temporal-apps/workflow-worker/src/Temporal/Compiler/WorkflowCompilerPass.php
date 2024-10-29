@@ -87,6 +87,7 @@ class WorkflowCompilerPass implements CompilerPassInterface
             ->setFactory(WorkflowFactory::class . '::childWorkflowStub')
             ->setArgument('$workflow', $workflow)
             ->setArgument('$options', new Reference($optionsKey))
+            ->setShared(false) // A new instance must be returned each time.
             ->setPublic(true); // The facade needs the service to be public.
         $container->setDefinition($workflow, $definition);
     }

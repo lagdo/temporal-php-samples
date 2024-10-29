@@ -11,12 +11,14 @@ services:
         autowire: true
 
     Temporal\OpenTelemetry\Tracer:
+        shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
             $serviceName: 'interceptors-sample-worker'
             $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
 
     Temporal\Client\WorkflowClientInterface:
+        shared: false
         public: true # We need to have a facade for this service.
         factory: ['App\Temporal\Factory\RuntimeFactory', 'client']
         arguments:
@@ -24,4 +26,5 @@ services:
 
     # Temporal classes
     App\Temporal\:
+        shared: false
         resource: '../../src/Temporal/'

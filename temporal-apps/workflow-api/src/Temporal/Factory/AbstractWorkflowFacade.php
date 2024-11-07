@@ -26,6 +26,6 @@ abstract class AbstractWorkflowFacade extends AbstractFacade
      */
     public static function getRunningWorkflow(string $workflowId): object
     {
-        return WorkflowClientFacade::newRunningWorkflowStub(self::getServiceIdentifier(), $workflowId);
+        return WorkflowClientFacade::newRunningWorkflowStub(static::getServiceIdentifier(), $workflowId);
     }
 }

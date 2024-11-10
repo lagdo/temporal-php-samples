@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Workflow\Service\Workflow\MoneyBatch\MoneyBatchWorkflowFacade;
-use App\Workflow\Service\Workflow\MoneyBatch\MoneyBatchWorkflowInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +39,6 @@ class MoneyBatchController extends AbstractController
     )]
     public function getStatus(string $workflowId): JsonResponse
     {
-        /** @var MoneyBatchWorkflowInterface */
         $workflow = MoneyBatchWorkflowFacade::getRunningWorkflow($workflowId);
 
         return $this->json([
@@ -60,7 +58,6 @@ class MoneyBatchController extends AbstractController
         $workflowArguments = $jsonArguments["args"] ?? [];
         // TODO: validate the input data here
 
-        /** @var MoneyBatchWorkflowInterface */
         $workflow = MoneyBatchWorkflowFacade::getRunningWorkflow($workflowId);
         $workflow->withdraw(...$workflowArguments);
 

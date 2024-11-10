@@ -6,6 +6,9 @@ namespace App\Workflow\Service\Workflow\SimpleActivity;
 
 use App\Temporal\Factory\AbstractWorkflowFacade;
 
+/**
+ * @extends AbstractWorkflowFacade<GreetingWorkflowInterface>
+ */
 class GreetingWorkflowFacade extends AbstractWorkflowFacade
 {
     /**

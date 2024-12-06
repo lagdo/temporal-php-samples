@@ -175,6 +175,27 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: "#/components/schemas/Result"
+            /api/simple/batch/workflows:
+                post:
+                    summary: 'Start a simple batch workflow'
+                    description: 'Start a simple batch workflow'
+                    operationId: api_simple_batch_start_workflow
+                    tags:
+                        - "Simple batch"
+                    requestBody:
+                        description: The workflow parameters
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "#/components/schemas/SimpleBatch"
+                    responses:
+                        "200":
+                            description: Workflow successfully started
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/WorkflowIds"
 
         components:
             schemas:
@@ -265,3 +286,15 @@ nelmio_api_doc:
                                     type: string
                                 amountCents:
                                     type: integer
+                SimpleBatch:
+                    type: object
+                    properties:
+                        args:
+                            type: object
+                            properties:
+                                batchId:
+                                    type: integer
+                                # options:
+                                #     type: array
+                                #     items:
+                                #         type: integer

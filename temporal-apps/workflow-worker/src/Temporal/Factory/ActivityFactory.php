@@ -46,6 +46,25 @@ class ActivityFactory
     }
 
     /**
+     * @param string $activityTaskQueue
+     *
+     * @return ActivityOptions
+     */
+    public static function simpleBatchOptions(string $activityTaskQueue): ActivityOptions
+    {
+        return ActivityOptions::new()
+            ->withTaskQueue($activityTaskQueue)
+            ->withStartToCloseTimeout(CarbonInterval::seconds(15))
+            ->withScheduleToCloseTimeout(CarbonInterval::hour(1))
+            ->withRetryOptions(
+                RetryOptions::new()
+                    ->withMaximumAttempts(100)
+                    ->withInitialInterval(CarbonInterval::second(1))
+                    ->withMaximumInterval(CarbonInterval::seconds(10))
+            );
+    }
+
+    /**
      * Factory for activity stubs
      *
      * @param string $activity

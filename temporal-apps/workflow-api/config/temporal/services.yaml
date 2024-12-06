@@ -32,6 +32,11 @@ services:
         class: 'Temporal\Client\WorkflowOptions'
         factory: ['App\Temporal\Factory\WorkflowFactory', 'moneyBatchOptions']
 
+    simpleBatchWorkflowOptions:
+        shared: false
+        class: 'Temporal\Client\WorkflowOptions'
+        factory: ['App\Temporal\Factory\WorkflowFactory', 'simpleBatchOptions']
+
     # Workflow proxies
     # App\Workflow\Service\Workflow\SimpleActivity\GreetingWorkflowInterface:
     #     shared: false

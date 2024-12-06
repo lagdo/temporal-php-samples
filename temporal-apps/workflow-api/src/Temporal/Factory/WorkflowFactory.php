@@ -35,6 +35,18 @@ class WorkflowFactory
     }
 
     /**
+     * @param string $workflowTaskQueue
+     *
+     * @return WorkflowOptions
+     */
+    public static function simpleBatchOptions(string $workflowTaskQueue): WorkflowOptions
+    {
+        return WorkflowOptions::new()
+            ->withTaskQueue($workflowTaskQueue)
+            ->withWorkflowExecutionTimeout(CarbonInterval::week());
+    }
+
+    /**
      * Factory for workflow stubs
      *
      * @param string $workflow

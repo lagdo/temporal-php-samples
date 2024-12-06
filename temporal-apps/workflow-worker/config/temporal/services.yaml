@@ -36,6 +36,11 @@ services:
         class: 'Temporal\Activity\ActivityOptions'
         factory: ['App\Temporal\Factory\ActivityFactory', 'moneyBatchOptions']
 
+    simpleBatchActivityOptions:
+        shared: false
+        class: 'Temporal\Activity\ActivityOptions'
+        factory: ['App\Temporal\Factory\ActivityFactory', 'simpleBatchOptions']
+
     # Options for the workflow proxies
     defaultChildWorkflowOptions:
         shared: false

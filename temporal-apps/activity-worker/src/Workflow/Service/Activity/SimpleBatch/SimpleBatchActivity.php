@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Workflow\Service\Activity\SimpleBatch;
+
+use App\Service\SimpleBatch\SimpleBatchService;
+
+class SimpleBatchActivity implements SimpleBatchActivityInterface
+{
+    public function __construct(private SimpleBatchService $simpleBatchService)
+    {}
+
+    /**
+     * @inheritDoc
+     */
+    public function getBatchItemIds(int $batchId): array
+    {
+        return $this->simpleBatchService->getBatchItemIds($batchId);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function itemProcessingStarted(int $itemId, int $batchId, array $options): bool
+    {
+        $this->simpleBatchService->itemProcessingStarted($itemId, $batchId, $options);
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function processItem(int $itemId, int $batchId, array $options): bool
+    {
+        $this->simpleBatchService->processItem($itemId, $batchId, $options);
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function itemProcessingEnded(int $itemId, int $batchId, array $options): bool
+    {
+        $this->simpleBatchService->itemProcessingEnded($itemId, $batchId, $options);
+        return true;
+    }
+}

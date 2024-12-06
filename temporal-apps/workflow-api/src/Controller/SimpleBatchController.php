@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
+use function count;
+
 #[AsController]
 #[Route('/api/simple/batch', name: 'api_simple_batch_')]
 class SimpleBatchController extends AbstractController
@@ -29,6 +31,24 @@ class SimpleBatchController extends AbstractController
         return $this->json([
             'workflow' => $workflowExecution->getID(),
             'run' => $workflowExecution->getRunID(),
+        ]);
+    }
+
+    #[Route(
+        '/workflows/{workflowId}/_outputs',
+        name: 'get_workflow_outouts',
+        methods: [Request::METHOD_GET]
+    )]
+    public function getOutputs(string $workflowId): JsonResponse
+    {
+        $workflow = SimpleBatchWorkflowFacade::getRunningWorkflow($workflowId);
+        $outputs = $workflow->getOutputs();
+
+        return $this->json([
+            'outputs' => [
+                'count' => count($outputs),
+                'items' => $outputs,
+            ],
         ]);
     }
 }

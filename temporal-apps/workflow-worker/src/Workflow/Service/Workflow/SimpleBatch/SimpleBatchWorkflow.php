@@ -9,6 +9,11 @@ use Temporal\Workflow;
 
 class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 {
+    /**
+     * @var array
+     */
+    private $outputs = [];
+
     public function start(int $batchId)
     {
         [$itemIds, $options] = yield SimpleBatchActivityFacade::getBatchItemIds($batchId);
@@ -30,12 +35,16 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
             // $handles[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
         }
 
-        $outputs = [];
         foreach($handles as $itemId => $handle)
         {
-            $outputs[$itemId] = yield $handle;
+            $this->outputs[$itemId] = yield $handle;
         }
 
-        return $outputs;
+        return $this->outputs;
+    }
+
+    public function getOutputs(): array
+    {
+        return $this->outputs;
     }
 }

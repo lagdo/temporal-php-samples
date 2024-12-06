@@ -196,6 +196,28 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: "#/components/schemas/WorkflowIds"
+            /api/simple/batch/workflows/{workflowId}/_outputs:
+                get:
+                    summary: 'Get the outputs of a simple batch workflow'
+                    description: 'Get the outputs of a simple batch workflow'
+                    operationId: api_simple_batch_get_workflow_outputs
+                    tags:
+                        - "Simple batch"
+                    parameters:
+                        -
+                            in: path
+                            name: workflowId
+                            required: true
+                            description: The workflow id
+                            schema:
+                                type: string
+                    responses:
+                        "200":
+                            description: The batch workflow status
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: "#/components/schemas/SimpleBatchOutputs"
 
         components:
             schemas:
@@ -294,7 +316,12 @@ nelmio_api_doc:
                             properties:
                                 batchId:
                                     type: integer
-                                # options:
-                                #     type: array
-                                #     items:
-                                #         type: integer
+                SimpleBatchOutputs:
+                    type: object
+                    properties:
+                        count:
+                            type: integer
+                        items:
+                            type: array
+                            items:
+                                type: object

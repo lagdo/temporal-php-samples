@@ -54,13 +54,14 @@ class ActivityFactory
     {
         return ActivityOptions::new()
             ->withTaskQueue($activityTaskQueue)
-            ->withStartToCloseTimeout(CarbonInterval::seconds(15))
-            ->withScheduleToCloseTimeout(CarbonInterval::hour(1))
+            ->withStartToCloseTimeout(CarbonInterval::hours(6))
+            ->withScheduleToStartTimeout(CarbonInterval::hours(4))
+            ->withScheduleToCloseTimeout(CarbonInterval::hours(6))
             ->withRetryOptions(
                 RetryOptions::new()
                     ->withMaximumAttempts(100)
-                    ->withInitialInterval(CarbonInterval::second(1))
-                    ->withMaximumInterval(CarbonInterval::seconds(10))
+                    ->withInitialInterval(CarbonInterval::second(10))
+                    ->withMaximumInterval(CarbonInterval::seconds(100))
             );
     }
 

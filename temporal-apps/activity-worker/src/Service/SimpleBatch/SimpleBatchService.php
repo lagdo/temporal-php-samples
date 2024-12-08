@@ -8,7 +8,7 @@ use Psr\Log\LoggerInterface;
 use function array_map;
 use function random_int;
 use function range;
-use function sleep;
+use function usleep;
 
 class SimpleBatchService
 {
@@ -27,7 +27,7 @@ class SimpleBatchService
     {
         return array_map(function(int $itemId) use($batchId) {
             return (($batchId % 100) * 1000) + $itemId;
-        }, range(1, random_int(100, 300)));
+        }, range(101, random_int(120, 150)));
     }
 
     /**
@@ -68,16 +68,17 @@ class SimpleBatchService
      * @param array $options
      *
      * @return void
+     * @throws Exception
      */
     public function processItem(int $itemId, int $batchId, array $options): void
     {
         $this->logger->debug("Processing item $itemId of batch $batchId.", ['options' => $options]);
 
-        $random = random_int(0, 100);
-        // Wait for max 2 seconds.
-        sleep($random % 3);
+        $random = random_int(0, 90);
+        // Wait for max 1 second.
+        usleep($random % 10000);
 
-        if($random > 50)
+        if($random > 30)
         {
             throw new Exception("Error while processing of item $itemId of batch $batchId.");
         }

@@ -196,11 +196,11 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: "#/components/schemas/WorkflowIds"
-            /api/simple/batch/workflows/{workflowId}/_outputs:
+            /api/simple/batch/workflows/{workflowId}/_status:
                 get:
-                    summary: 'Get the outputs of a simple batch workflow'
-                    description: 'Get the outputs of a simple batch workflow'
-                    operationId: api_simple_batch_get_workflow_outputs
+                    summary: 'Get the status of a simple batch workflow'
+                    description: 'Get the status of a simple batch workflow'
+                    operationId: api_simple_batch_get_workflow_status
                     tags:
                         - "Simple batch"
                     parameters:

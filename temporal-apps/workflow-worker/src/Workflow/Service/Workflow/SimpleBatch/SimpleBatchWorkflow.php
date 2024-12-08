@@ -12,8 +12,16 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     /**
      * @var array
      */
+    private $results = [];
+
+    /**
+     * @var array
+     */
     private $outputs = [];
 
+    /**
+     * @inheritDoc
+     */
     public function start(int $batchId)
     {
         [$itemIds, $options] = yield SimpleBatchActivityFacade::getBatchItemIds($batchId);
@@ -30,6 +38,8 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
                 // Set the item processing as ended.
                 yield SimpleBatchActivityFacade::itemProcessingEnded($itemId, $batchId, $options);
     
+                $this->results[$itemId] = $output;
+
                 return $output;
             });
             // $handles[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
@@ -43,6 +53,17 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
         return $this->outputs;
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function getResults(): array
+    {
+        return $this->outputs;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getOutputs(): array
     {
         return $this->outputs;

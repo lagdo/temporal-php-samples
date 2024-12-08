@@ -35,19 +35,24 @@ class SimpleBatchController extends AbstractController
     }
 
     #[Route(
-        '/workflows/{workflowId}/_outputs',
-        name: 'get_workflow_outouts',
+        '/workflows/{workflowId}/_status',
+        name: 'get_workflow_status',
         methods: [Request::METHOD_GET]
     )]
-    public function getOutputs(string $workflowId): JsonResponse
+    public function getStatus(string $workflowId): JsonResponse
     {
         $workflow = SimpleBatchWorkflowFacade::getRunningWorkflow($workflowId);
+        $results = $workflow->getResults();
         $outputs = $workflow->getOutputs();
 
         return $this->json([
-            'outputs' => [
-                'count' => count($outputs),
-                'items' => $outputs,
+            'count' => [
+                'results' => count($results),
+                'outputs' => count($outputs),
+            ],
+            'items' => [
+                'results' => $results,
+                'outputs' => $outputs,
             ],
         ]);
     }

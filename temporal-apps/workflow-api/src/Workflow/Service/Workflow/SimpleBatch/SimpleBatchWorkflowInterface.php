@@ -17,5 +17,8 @@ interface SimpleBatchWorkflowInterface
     public function start(int $batchId);
 
     #[QueryMethod]
+    public function getResults(): array;
+
+    #[QueryMethod]
     public function getOutputs(): array;
 }

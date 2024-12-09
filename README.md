@@ -38,13 +38,13 @@ cd docker/temporal-apps/
 docker-compose build
 docker-compose run --rm --user temporal activity-worker composer install
 docker-compose run --rm --user temporal workflow-worker composer install
-docker-compose run --rm --user temporal workflow-api-nginx-unit composer install
+docker-compose run --rm --user temporal workflow-api-frankenphp composer install
 
 docker-compose up -d
 ```
 
-By default, the `workflow-api` app will be started in the `Nginx Unit` container.
-The other application servers (PHP-FPM and FrankenPHP) can be enabled by uncommenting their definition in the `docker-compose.yml` file.
+By default, the `workflow-api` app will be started in the `FrankenPHP` container.
+The other application servers (PHP-FPM and Nginx Unit) can be enabled by uncommenting their definition in the `docker-compose.yml` file.
 
 Each application server is configured to be available on a separate port:
 - Nginx Unit: http://localhost:9300

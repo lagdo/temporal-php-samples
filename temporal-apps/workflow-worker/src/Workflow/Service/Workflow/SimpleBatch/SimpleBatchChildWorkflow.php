@@ -16,6 +16,7 @@ class SimpleBatchChildWorkflow implements SimpleBatchChildWorkflowInterface
         // Set the item processing as started.
         yield SimpleBatchActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
 
+        // This activity randomly throws an exception.
         $output = yield SimpleBatchActivityFacade::processItem($itemId, $batchId, $options);
 
         // Set the item processing as ended.

@@ -33,11 +33,13 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
                 // Set the item processing as started.
                 yield SimpleBatchActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
 
+                // This activity randomly throws an exception.
                 $output = yield SimpleBatchActivityFacade::processItem($itemId, $batchId, $options);
 
                 // Set the item processing as ended.
                 yield SimpleBatchActivityFacade::itemProcessingEnded($itemId, $batchId, $options);
     
+                // Note: This will get the outputs as soon as they are available.
                 $this->results[$itemId] = $output;
 
                 return $output;
@@ -47,6 +49,7 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 
         foreach($handles as $itemId => $handle)
         {
+            // Note: This will get the outputs in the same order the tasks were started.
             $this->outputs[$itemId] = yield $handle;
         }
 

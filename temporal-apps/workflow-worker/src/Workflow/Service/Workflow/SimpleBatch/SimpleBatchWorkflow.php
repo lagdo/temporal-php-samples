@@ -58,7 +58,7 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
      */
     public function getResults(): array
     {
-        return $this->outputs;
+        return $this->results;
     }
 
     /**

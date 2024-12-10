@@ -26,10 +26,10 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     {
         [$itemIds, $options] = yield SimpleBatchActivityFacade::getBatchItemIds($batchId);
 
-        $handles = [];
+        $promises = [];
         foreach($itemIds as $itemId)
         {
-            $handles[$itemId] = Workflow::async(function() use($itemId, $batchId, $options) {
+            $promises[$itemId] = Workflow::async(function() use($itemId, $batchId, $options) {
                 // Set the item processing as started.
                 yield SimpleBatchActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
 
@@ -44,13 +44,13 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 
                 return $output;
             });
-            // $handles[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
+            // $promises[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
         }
 
-        foreach($handles as $itemId => $handle)
+        foreach($promises as $itemId => $promise)
         {
             // Note: This will get the outputs in the same order the tasks were started.
-            $this->outputs[$itemId] = yield $handle;
+            $this->outputs[$itemId] = yield $promise;
         }
 
         return $this->outputs;

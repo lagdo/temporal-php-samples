@@ -18,5 +18,5 @@ interface SimpleBatchWorkflowInterface
     public function getResults(): array;
 
     #[QueryMethod]
-    public function getOutputs(): array;
+    public function getPending(): array;
 }

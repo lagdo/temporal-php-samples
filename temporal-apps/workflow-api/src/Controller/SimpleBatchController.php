@@ -43,16 +43,16 @@ class SimpleBatchController extends AbstractController
     {
         $workflow = SimpleBatchWorkflowFacade::getRunningWorkflow($workflowId);
         $results = $workflow->getResults();
-        $outputs = $workflow->getOutputs();
+        $pending = $workflow->getPending();
 
         return $this->json([
             'count' => [
+                'pending' => count($pending),
                 'results' => count($results),
-                'outputs' => count($outputs),
             ],
             'items' => [
+                'pending' => $pending,
                 'results' => $results,
-                'outputs' => $outputs,
             ],
         ]);
     }

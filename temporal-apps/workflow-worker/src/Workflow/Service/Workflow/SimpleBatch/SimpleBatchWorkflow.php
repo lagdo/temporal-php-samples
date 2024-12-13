@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Workflow\Service\Workflow\SimpleBatch;
 
 use App\Workflow\Service\Activity\SimpleBatch\SimpleBatchActivityFacade;
+use Temporal\Promise;
 use Temporal\Workflow;
+use Throwable;
 
 class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 {
@@ -17,7 +19,7 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     /**
      * @var array
      */
-    private $outputs = [];
+    private $pending = [];
 
     /**
      * @inheritDoc
@@ -26,10 +28,24 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     {
         [$itemIds, $options] = yield SimpleBatchActivityFacade::getBatchItemIds($batchId);
 
-        $handles = [];
+        $successCallback = function($output) {
+            $this->results[] = [
+                'success' => true,
+                'output' => $output,
+            ];
+        };
+        $errorCallback = function(Throwable $e) {
+            $this->results[] = [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        };
+
+        $promises = [];
         foreach($itemIds as $itemId)
         {
-            $handles[$itemId] = Workflow::async(function() use($itemId, $batchId, $options) {
+            $this->pending[$itemId] = true;
+            $promises[$itemId] = Workflow::async(function() use($itemId, $batchId, $options) {
                 // Set the item processing as started.
                 yield SimpleBatchActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
 
@@ -38,22 +54,18 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 
                 // Set the item processing as ended.
                 yield SimpleBatchActivityFacade::itemProcessingEnded($itemId, $batchId, $options);
-    
-                // Note: This will get the outputs as soon as they are available.
-                $this->results[$itemId] = $output;
 
                 return $output;
-            });
-            // $handles[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
+            })
+                ->then($successCallback, $errorCallback)
+                ->finally(fn() => $this->pending[$itemId] = false);
+            // $promises[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
         }
 
-        foreach($handles as $itemId => $handle)
-        {
-            // Note: This will get the outputs in the same order the tasks were started.
-            $this->outputs[$itemId] = yield $handle;
-        }
+        // Wait for all the async calls to terminate.
+        yield Promise::all($promises);
 
-        return $this->outputs;
+        return $this->results;
     }
 
     /**
@@ -67,8 +79,8 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     /**
      * @inheritDoc
      */
-    public function getOutputs(): array
+    public function getPending(): array
     {
-        return $this->outputs;
+        return $this->pending;
     }
 }

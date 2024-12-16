@@ -9,6 +9,9 @@ use Temporal\Promise;
 use Temporal\Workflow;
 use Throwable;
 
+use function array_filter;
+use function array_keys;
+
 class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 {
     /**
@@ -28,19 +31,6 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     {
         [$itemIds, $options] = yield SimpleBatchActivityFacade::getBatchItemIds($batchId);
 
-        $successCallback = function($output) {
-            $this->results[] = [
-                'success' => true,
-                'output' => $output,
-            ];
-        };
-        $errorCallback = function(Throwable $e) {
-            $this->results[] = [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
-        };
-
         $promises = [];
         foreach($itemIds as $itemId)
         {
@@ -57,10 +47,19 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 
                 return $output;
             })
-                ->then($successCallback, $errorCallback)
-                // Calling always() instead of finally() because the Temporal PHP SDK depends on
-                // react/promise 2.9. Will need to change to finally() when upgrading to react/promise 3.x.
-                ->always(fn() => $this->pending[$itemId] = false);
+            ->then(
+                fn($output) => $this->results[$itemId] = [
+                    'success' => true,
+                    'output' => $output,
+                ],
+                fn(Throwable $e) => $this->results[$itemId] = [
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ]
+            )
+            // We are calling always() instead of finally() because the Temporal PHP SDK depends on
+            // react/promise 2.9. Will need to change to finally() when upgrading to react/promise 3.x.
+            ->always(fn() => $this->pending[$itemId] = false);
             // $promises[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
         }
 
@@ -83,6 +82,6 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
      */
     public function getPending(): array
     {
-        return $this->pending;
+        return array_keys(array_filter($this->pending, fn($pending) => $pending));
     }
 }

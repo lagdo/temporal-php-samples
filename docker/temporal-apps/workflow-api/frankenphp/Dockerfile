@@ -24,7 +24,19 @@ RUN set -xe && apk add --no-cache --virtual .build-deps \
   libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions opcache zip intl sockets protobuf grpc
+  install-php-extensions opcache zip intl sockets protobuf
+
+RUN apk add --no-cache grpc-cpp grpc-dev $PHPIZE_DEPS && \
+  GRPC_VERSION=$(apk info grpc -d | grep grpc | cut -d- -f2) && \
+  git clone --depth 1 -b v${GRPC_VERSION} https://github.com/grpc/grpc /tmp/grpc && \
+  cd /tmp/grpc/src/php/ext/grpc && \
+  phpize && \
+  ./configure && \
+  make && \
+  make install && \
+  rm -rf /tmp/grpc && \
+  apk del --no-cache git grpc-dev $PHPIZE_DEPS && \
+  echo "extension=grpc.so" > /usr/local/etc/php/conf.d/grpc.ini
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
   install-php-extensions bcmath ctype curl dom fileinfo gd mbstring opcache openssl phar redis tokenizer zip \
@@ -43,7 +55,7 @@ RUN adduser -G ${PHP_USER} --system -D -s /bin/sh -u ${PHP_UID} ${PHP_USER}
 RUN mkdir -p /app
 
 # Make sure files/folders needed by the processes are accessible
-RUN chown -R ${PHP_USER}.${PHP_USER} /app /data/caddy /config/caddy
+RUN chown -R ${PHP_USER}:${PHP_USER} /app /data/caddy /config/caddy
 
 # Add additional capability to bind to port 80 and 443
 RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp

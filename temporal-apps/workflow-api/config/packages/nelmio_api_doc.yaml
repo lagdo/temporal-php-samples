@@ -11,7 +11,7 @@ nelmio_api_doc:
             description: Sample Symfony apps to run an API and workers for Temporal workflows.
             version: 0.0.1
         paths:
-            /api/workflows/{workflowId}/{runId}/events:
+            /api/workflows/{workflowId}/runs/{runId}/events:
                 get:
                     summary: 'Get workflow events'
                     description: 'Get workflow events'

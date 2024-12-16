@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class WorkflowController extends AbstractController
 {
     #[Route(
-        '/workflows/{workflowId}/{runId}/events',
+        '/workflows/{workflowId}/runs/{runId}/events',
         name: 'get_workflow_events',
         methods: [Request::METHOD_GET]
     )]

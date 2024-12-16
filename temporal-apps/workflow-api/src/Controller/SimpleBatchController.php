@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
+use function array_filter;
 use function count;
 
 #[AsController]
@@ -49,6 +50,8 @@ class SimpleBatchController extends AbstractController
             'count' => [
                 'pending' => count($pending),
                 'results' => count($results),
+                'succeeded' => count(array_filter($results, fn($result) => $result['success'])),
+                'failed' => count(array_filter($results, fn($result) => !$result['success'])),
             ],
             'items' => [
                 'pending' => $pending,

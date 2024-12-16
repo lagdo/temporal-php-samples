@@ -32,9 +32,9 @@ interface SimpleBatchActivityInterface
      * @param int $batchId
      * @param array $options
      *
-     * @return void
+     * @return int
      */
-    public function processItem(int $itemId, int $batchId, array $options): bool;
+    public function processItem(int $itemId, int $batchId, array $options): int;
 
     /**
      * @param int $itemId

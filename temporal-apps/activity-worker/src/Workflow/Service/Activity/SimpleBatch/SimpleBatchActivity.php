@@ -31,10 +31,9 @@ class SimpleBatchActivity implements SimpleBatchActivityInterface
     /**
      * @inheritDoc
      */
-    public function processItem(int $itemId, int $batchId, array $options): bool
+    public function processItem(int $itemId, int $batchId, array $options): int
     {
-        $this->simpleBatchService->processItem($itemId, $batchId, $options);
-        return true;
+        return $this->simpleBatchService->processItem($itemId, $batchId, $options);
     }
 
     /**

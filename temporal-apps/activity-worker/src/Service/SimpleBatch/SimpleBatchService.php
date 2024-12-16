@@ -67,10 +67,10 @@ class SimpleBatchService
      * @param int $batchId
      * @param array $options
      *
-     * @return void
+     * @return int
      * @throws Exception
      */
-    public function processItem(int $itemId, int $batchId, array $options): void
+    public function processItem(int $itemId, int $batchId, array $options): int
     {
         $this->logger->debug("Processing item $itemId of batch $batchId.", ['options' => $options]);
 
@@ -82,6 +82,7 @@ class SimpleBatchService
         {
             throw new Exception("Error while processing of item $itemId of batch $batchId.");
         }
+        return $random;
     }
 
     /**

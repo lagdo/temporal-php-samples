@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Workflow\SimpleBatch;
 
-use App\Workflow\Service\Activity\SimpleBatch\SimpleBatchActivityFacade;
+use App\Workflow\Service\Activity\SimpleBatch\SimpleBatchActivityFacade as ActivityFacade;
 use Temporal\Promise;
 use Temporal\Workflow;
 use Throwable;
@@ -29,24 +29,26 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
      */
     public function start(int $batchId)
     {
-        [$itemIds, $options] = yield SimpleBatchActivityFacade::getBatchItemIds($batchId);
+        [$itemIds, $options] = yield ActivityFacade::getBatchItemIds($batchId);
 
         $promises = [];
         foreach($itemIds as $itemId)
         {
             $this->pending[$itemId] = true;
-            $promises[$itemId] = Workflow::async(function() use($itemId, $batchId, $options) {
-                // Set the item processing as started.
-                yield SimpleBatchActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
+            $promises[$itemId] = Workflow::async(
+                function() use($itemId, $batchId, $options) {
+                    // Set the item processing as started.
+                    yield ActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
 
-                // This activity randomly throws an exception.
-                $output = yield SimpleBatchActivityFacade::processItem($itemId, $batchId, $options);
+                    // This activity randomly throws an exception.
+                    $output = yield ActivityFacade::processItem($itemId, $batchId, $options);
 
-                // Set the item processing as ended.
-                yield SimpleBatchActivityFacade::itemProcessingEnded($itemId, $batchId, $options);
+                    // Set the item processing as ended.
+                    yield ActivityFacade::itemProcessingEnded($itemId, $batchId, $options);
 
-                return $output;
-            })
+                    return $output;
+                }
+            )
             ->then(
                 fn($output) => $this->results[$itemId] = [
                     'success' => true,

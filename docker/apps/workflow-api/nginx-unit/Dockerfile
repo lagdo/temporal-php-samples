@@ -77,6 +77,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # Configure Nginx Unit
 COPY workflow-api/nginx-unit/config/www.json /docker-entrypoint.d/config.json
 COPY workflow-api/nginx-unit/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 

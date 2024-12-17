@@ -1,6 +1,7 @@
 ARG ALPINE_VERSION=3.19
 ARG PHP_VERSION=8.3
 ARG UNIT_VERSION=1.33.0
+ARG PROTOBUF_VERSION=4.29.1
 
 # Nginx Unit downloader
 FROM alpine:${ALPINE_VERSION} AS nginx-unit-downloader
@@ -47,9 +48,16 @@ RUN set -xe && apk add --no-cache --virtual .build-deps \
   libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions opcache zip intl sockets protobuf
+  install-php-extensions opcache zip intl sockets bcmath ctype phar \
+  curl dom fileinfo gd mbstring opcache openssl redis tokenizer \
+  # Database
+  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql mongodb \
+  # PHP PECL extensions
+  amqp xdebug
 
-RUN apk add --no-cache grpc-cpp grpc-dev $PHPIZE_DEPS && \
+ARG PROTOBUF_VERSION
+RUN apk add --no-cache autoconf grpc-cpp grpc-dev $PHPIZE_DEPS && \
+  pecl install protobuf-${PROTOBUF_VERSION} && \
   GRPC_VERSION=$(apk info grpc -d | grep grpc | cut -d- -f2) && \
   git clone --depth 1 -b v${GRPC_VERSION} https://github.com/grpc/grpc /tmp/grpc && \
   cd /tmp/grpc/src/php/ext/grpc && \
@@ -58,15 +66,8 @@ RUN apk add --no-cache grpc-cpp grpc-dev $PHPIZE_DEPS && \
   make && \
   make install && \
   rm -rf /tmp/grpc && \
-  apk del --no-cache git grpc-dev $PHPIZE_DEPS && \
+  apk del --no-cache autoconf grpc-dev $PHPIZE_DEPS && \
   echo "extension=grpc.so" > /usr/local/etc/php/conf.d/grpc.ini
-
-RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
-  install-php-extensions bcmath ctype curl dom fileinfo gd mbstring opcache openssl phar redis tokenizer zip \
-  # Database
-  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql mongodb \
-  # PHP PECL extensions
-  amqp xdebug
 
 # Nginx Unit
 COPY --from=nginx-unit-builder ["/opt/unit/", "/opt/unit/"]

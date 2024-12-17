@@ -30,7 +30,7 @@ It needs to be started before running the Symfony applications.
 
 The `docker/temporal-apps/docker-compose.yml` file will start the 3 Symfony applications, which need to connect to the Temporal server, using the address or hostname set in the `environment` section in the docker-compose file.
 
-Before starting the applications, first build the containers, then install the PHP packages in each container with `Composer`.
+Before starting the applications, first build the containers, then install the PHP packages with `Composer`.
 
 ```bash
 cd docker/temporal-apps/
@@ -38,13 +38,13 @@ cd docker/temporal-apps/
 docker-compose build
 docker-compose run --rm --user temporal activity-worker composer install
 docker-compose run --rm --user temporal workflow-worker composer install
-docker-compose run --rm --user temporal workflow-api-frankenphp composer install
+docker-compose run --rm --user temporal workflow-api-nginx-unit composer install
 
 docker-compose up -d
 ```
 
-By default, the `workflow-api` app will be started in the `FrankenPHP` container.
-The other application servers (PHP-FPM and Nginx Unit) can be enabled by uncommenting their definition in the `docker-compose.yml` file.
+By default, the `workflow-api` app will be started in the `Nginx Unit` container.
+The other application servers (`FrankenPHP` and `PHP-FPM`) can be enabled by uncommenting their definition in the `docker-compose.yml` file.
 
 Each application server is configured to be available on a separate port:
 - Nginx Unit: http://localhost:9300

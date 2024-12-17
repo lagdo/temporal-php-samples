@@ -42,10 +42,8 @@ ENV PHP_USER=${PHP_USER}
 ENV PHP_UID=${PHP_UID}
 ENV PHP_GID=${PHP_GID}
 
-RUN apk add --no-cache bash curl wget zip vim git
-
-RUN set -xe && apk add --no-cache --virtual .build-deps \
-  libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
+RUN set -xe && apk add --no-cache --virtual .build-deps bash curl wget zip vim git \
+  libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev pcre patch openssh-client
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
   install-php-extensions opcache zip intl sockets bcmath ctype phar \

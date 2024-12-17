@@ -4,10 +4,10 @@ This repo provides sample applications and Docker Compose config to easily get s
 
 ## The Symfony applications
 
-There are 3 applications in the `temporal-apps` subdir.
-- An API to interact (start, query, signal) with the workflows: `temporal-apps\workflow-api`.
-- A first worker to execute Temporal workflow functions: `temporal-apps\workflow-worker`.
-- A second worker to execute Temporal activity functions: `temporal-apps\activity-worker`.
+There are 3 applications in the `apps` subdir.
+- An API to interact (start, query, signal) with the workflows: `apps\workflow-api`.
+- A first worker to execute Temporal workflow functions: `apps\workflow-worker`.
+- A second worker to execute Temporal activity functions: `apps\activity-worker`.
 
 The workers are powered by the [RoadRunner](https://roadrunner.dev/) application server.
 The workflow workers and activity workers are configured to listen on two separate queues on the Temporal server.
@@ -20,20 +20,20 @@ The workflow examples are taken from the [Temporal PHP SDK sampes](https://githu
 
 There are two config files for Temporal in each Symfony app, `config/temporal/runtime.yaml` for the Temporal SDK runtime, and `config/temporal/services.yaml` for the worflows.
 
-Other options are set in the `environment` section of the containers in the `docker/temporal-apps/docker-compose.yml` file.
+Other options are set in the `environment` section of the containers in the `docker/apps/docker-compose.yml` file.
 
 ### Running the samples
 
-The `docker/temporal-server/docker-compose.yml` file will start the Temporal server.
+The `docker/server/docker-compose.yml` file will start the Temporal server.
 It is the same as in the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), but without the PHP application container.
 It needs to be started before running the Symfony applications.
 
-The `docker/temporal-apps/docker-compose.yml` file will start the 3 Symfony applications, which need to connect to the Temporal server, using the address or hostname set in the `environment` section in the docker-compose file.
+The `docker/apps/docker-compose.yml` file will start the 3 Symfony applications, which need to connect to the Temporal server, using the address or hostname set in the `environment` section in the docker-compose file.
 
 Before starting the applications, first build the containers, then install the PHP packages with `Composer`.
 
 ```bash
-cd docker/temporal-apps/
+cd docker/apps/
 
 docker-compose build
 docker-compose run --rm --user temporal activity-worker composer install
@@ -53,7 +53,7 @@ Each application server is configured to be available on a separate port:
 
 ### Swagger
 
-The `workflow-api` app also provides a [Swagger](https://swagger.io/) webpage, which is configured in the `temporal-apps/workflow-api/config/packages/nelmio_api_doc.yaml` file.
+The `workflow-api` app also provides a [Swagger](https://swagger.io/) webpage, which is configured in the `apps/workflow-api/config/packages/nelmio_api_doc.yaml` file.
 
 The page is available at [http://localhost:9300/api/doc](http://localhost:9300/api/doc).
 

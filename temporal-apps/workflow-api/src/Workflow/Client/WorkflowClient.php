@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Workflow\Library;
+namespace App\Workflow\Client;
 
 use Temporal\Api\History\V1\HistoryEvent;
 use Temporal\Client\WorkflowClientInterface;

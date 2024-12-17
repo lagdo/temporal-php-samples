@@ -10,10 +10,10 @@ services:
             # Queue for the workflow workers
             $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
 
-    # Workflow library
-    App\Workflow\Library\:
+    # Workflow client library
+    App\Workflow\Client\:
         shared: false
-        resource: '../../src/Workflow/Library/'
+        resource: '../../src/Workflow/Client/'
 
     # Application workflows
     App\Workflow\Service\Workflow\:

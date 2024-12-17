@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Workflow\Library\WorkflowClient;
+use App\Workflow\Client\WorkflowClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

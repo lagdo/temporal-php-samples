@@ -47,11 +47,11 @@ RUN set -xe && apk add --no-cache --virtual .build-deps bash curl wget zip vim g
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
   install-php-extensions opcache zip intl sockets bcmath ctype phar \
-  curl dom fileinfo gd mbstring opcache openssl redis tokenizer \
+  curl dom fileinfo gd mbstring openssl redis tokenizer \
   # Database
-  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql mongodb \
+  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql \
   # PHP PECL extensions
-  amqp xdebug
+  xdebug
 
 ARG PROTOBUF_VERSION
 RUN apk add --no-cache autoconf grpc-cpp grpc-dev $PHPIZE_DEPS && \

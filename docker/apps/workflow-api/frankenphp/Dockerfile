@@ -19,18 +19,16 @@ ENV SERVER_NAME=:80
 # Enable PHP production settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-RUN apk add --no-cache bash curl wget zip vim git
-
-RUN set -xe && apk add --no-cache --virtual .build-deps \
-  libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev patch openssh-client
+RUN set -xe && apk add --no-cache --virtual .build-deps bash curl wget zip vim git \
+  libzip-dev freetype-dev icu-dev libmcrypt-dev libxslt-dev pcre patch openssh-client
 
 RUN --mount=type=bind,from=mlocati/php-extension-installer:2,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
   install-php-extensions opcache zip intl sockets bcmath ctype phar \
-  curl dom fileinfo gd mbstring opcache openssl redis tokenizer \
+  curl dom fileinfo gd mbstring openssl redis tokenizer \
   # Database
-  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql mongodb \
+  pdo pdo_sqlite sqlite3 pdo_mysql mysqlnd mysqli pdo_pgsql pgsql \
   # PHP PECL extensions
-  amqp xdebug
+  xdebug
 
 ARG PROTOBUF_VERSION
 RUN apk add --no-cache autoconf grpc-cpp grpc-dev $PHPIZE_DEPS && \

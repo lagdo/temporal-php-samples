@@ -1,0 +1,44 @@
+version: "3"
+
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+# temporal:
+#   address: ${TEMPORAL_HOST:-temporal.addr}:${TEMPORAL_PORT:-7233}
+
+server:
+  command: "php public/index.php"
+  env:
+    APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+
+http:
+  address: 0.0.0.0:80
+  pool:
+    debug: false
+  middleware: [ "static", "gzip" ]
+  uploads:
+    forbid: [ ".php", ".exe", ".bat" ]
+  static:
+    dir: "public"
+    forbid: [ ".php", ".htaccess" ]
+
+logs:
+  mode: development
+  channels:
+    http:
+      level: debug # Log all http requests, set to info to disable
+    server:
+      level: info # Everything written to worker stderr is logged
+      mode: raw
+    metrics:
+      level: debug
+
+otel:
+  insecure: true
+  compress: false
+  client: http
+  exporter: otlp
+  resource:
+    service_name: rr-activity-worker
+    service_version: 1.0.0
+  endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

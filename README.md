@@ -12,20 +12,20 @@ There are 3 applications in the `apps` subdir.
 The workers are powered by the [RoadRunner](https://roadrunner.dev/) application server.
 The workflow workers and activity workers are configured to listen on two separate queues on the Temporal server.
 
-The API run either with [Nginx Unit](https://unit.nginx.org/), [FrankenPHP](https://frankenphp.dev/) or `Nginx+PHP-FPM`.
+The API run either with [Nginx Unit](https://unit.nginx.org/), [FrankenPHP](https://frankenphp.dev/), `Nginx+PHP-FPM` or [RoadRunner](https://roadrunner.dev/).
 
 The workflow examples are taken from the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), and modified to adapt to the Symfony applications.
 
 ### Configuration
 
-There are two config files for Temporal in each Symfony app, `config/temporal/runtime.yaml` for the Temporal SDK runtime, and `config/temporal/services.yaml` for the worflows.
+There are two config files for Temporal in each Symfony app, `config/temporal/runtime.yaml` for the Temporal runtime, and `config/temporal/services.yaml` for the worflows and activities.
 
 Other options are set in the `environment` section of the containers in the `docker/apps/docker-compose.yml` file.
 
 ### Running the samples
 
 The `docker/server/docker-compose.yml` file will start the Temporal server.
-It is the same as in the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), but without the PHP application container.
+It is the same as in the [Temporal PHP SDK samples](https://github.com/temporalio/samples-php), but without the PHP application container.
 It needs to be started before running the Symfony applications.
 
 The `docker/apps/docker-compose.yml` file will start the 3 Symfony applications, which need to connect to the Temporal server, using the address or hostname set in the `environment` section in the docker-compose file.
@@ -50,18 +50,19 @@ Each application server is configured to be available on a separate port:
 - Nginx Unit: http://localhost:9300
 - FrankenPHP: http://localhost:9301
 - Nginx+PHP-FPM: http://localhost:9302
+- RoadRunner: http://localhost:9303
 
 ### Swagger
 
 The `workflow-api` app also provides a [Swagger](https://swagger.io/) webpage, which is configured in the `apps/workflow-api/config/packages/nelmio_api_doc.yaml` file.
 
-The page is available at [http://localhost:9300/api/doc](http://localhost:9300/api/doc).
+The page is available at `/api/doc` in each of the 4 `workflow-api` containers.
 
 ## How it works
 
 Implementing a workflow in these Symfony applications requires to define interfaces, classes and facades (with the [https://github.com/lagdo/symfony-facades](https://github.com/lagdo/symfony-facades) package), resp. for workflows and activities, together with their respective options.
 
-The facades are required here because we are in a case where dependency injection simply doesn't work.
+We are using facades here because the Temporal PHP SDK doesn't allow dependency injection to work with the workflow classes.
 
 ### Workflows and activities
 

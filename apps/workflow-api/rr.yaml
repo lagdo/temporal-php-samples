@@ -3,9 +3,6 @@ version: "3"
 rpc:
   listen: tcp://127.0.0.1:6001
 
-# temporal:
-#   address: ${TEMPORAL_HOST:-temporal.addr}:${TEMPORAL_PORT:-7233}
-
 server:
   command: "php public/index.php"
   env:
@@ -15,7 +12,7 @@ http:
   address: 0.0.0.0:80
   pool:
     debug: false
-  middleware: [ "static", "gzip" ]
+  middleware: [ "static", "gzip", "otel" ]
   uploads:
     forbid: [ ".php", ".exe", ".bat" ]
   static:

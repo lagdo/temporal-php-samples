@@ -13,10 +13,6 @@ temporal:
   activities:
     num_workers: 4
 
-# service:
-#   interceptors:
-#     command: "${INTERCEPTORS_RR_PATH:-./rr} serve -c ./interceptors/rr.yaml"
-
 logs:
   level: info
   mode: development

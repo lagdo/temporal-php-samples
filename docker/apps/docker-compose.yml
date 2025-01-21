@@ -21,6 +21,7 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
+      - OTEL_SERVICE_NAME=app-activity-worker
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
@@ -48,6 +49,7 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
+      - OTEL_SERVICE_NAME=app-workflow-worker
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
@@ -75,6 +77,7 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
+      - OTEL_SERVICE_NAME=app-workflow-api
     ports:
       - 9300:80
     extra_hosts:
@@ -104,6 +107,7 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
+      - OTEL_SERVICE_NAME=app-workflow-api
     ports:
       - 9301:80
     extra_hosts:
@@ -132,6 +136,7 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
+      - OTEL_SERVICE_NAME=app-workflow-api
     ports:
       - 9302:80
     extra_hosts:
@@ -161,6 +166,7 @@ services:
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
+      - OTEL_SERVICE_NAME=app-workflow-api
     ports:
       - 9303:80
     extra_hosts:

@@ -1,6 +1,7 @@
 parameters:
   # Default value for the collector endpoint
   env(OTEL_COLLECTOR_ENDPOINT): 'http://collector.addr:4317'
+  env(OTEL_SERVICE_NAME): 'app-activity-worker'
 
 services:
     # default configuration for services in *this* file
@@ -16,7 +17,7 @@ services:
         shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
-            $serviceName: 'activity-worker-interceptor'
+            $serviceName: '%env(OTEL_SERVICE_NAME)%'
             $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
 
     Temporal\WorkerFactory:

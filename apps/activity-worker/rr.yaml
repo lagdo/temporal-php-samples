@@ -30,6 +30,6 @@ otel:
   client: http
   exporter: otlp
   resource:
-    service_name: activity-worker-interceptor
+    service_name: run-activity-worker
     service_version: 1.0.0
   endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

@@ -1,6 +1,7 @@
 parameters:
     # Default value for the Temporal collector endpoint
     env(OTEL_COLLECTOR_ENDPOINT): 'http://collector.addr:4317'
+    env(OTEL_SERVICE_NAME): 'app-workflow-api'
     # Default value for the Temporal server endpoint
     env(TEMPORAL_SERVER_ENDPOINT): 'http://temporal.addr:7233'
 
@@ -14,7 +15,7 @@ services:
         shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
-            $serviceName: 'workflow-api-interceptor'
+            $serviceName: '%env(OTEL_SERVICE_NAME)%'
             $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
 
     Temporal\Client\WorkflowClientInterface:

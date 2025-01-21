@@ -16,7 +16,7 @@ services:
         shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
-            $serviceName: 'interceptors-sample-worker'
+            $serviceName: 'activity-worker-interceptor'
             $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
 
     Temporal\WorkerFactory:

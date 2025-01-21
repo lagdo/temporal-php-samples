@@ -17,7 +17,6 @@ use OpenTelemetry\SDK\Trace\TracerProvider;
 use OpenTelemetry\SemConv\ResourceAttributes;
 use Temporal\Interceptor\SimplePipelineProvider;
 use Temporal\OpenTelemetry\Interceptor\OpenTelemetryActivityInboundInterceptor;
-use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowOutboundRequestInterceptor;
 use Temporal\OpenTelemetry\Tracer;
 use Temporal\Worker\WorkerFactoryInterface;
 use Temporal\Worker\WorkerInterface;
@@ -39,7 +38,6 @@ class RuntimeFactory
             taskQueue: $activityTaskQueue ?? WorkerFactoryInterface::DEFAULT_TASK_QUEUE,
             interceptorProvider: new SimplePipelineProvider([
                 new OpenTelemetryActivityInboundInterceptor($tracer),
-                new OpenTelemetryWorkflowOutboundRequestInterceptor($tracer),
             ])
         );
     }

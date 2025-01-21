@@ -14,7 +14,7 @@ services:
         shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
-            $serviceName: 'interceptors-sample-worker'
+            $serviceName: 'workflow-api-interceptor'
             $collectorEndpoint: '%env(OTEL_COLLECTOR_ENDPOINT)%'
 
     Temporal\Client\WorkflowClientInterface:

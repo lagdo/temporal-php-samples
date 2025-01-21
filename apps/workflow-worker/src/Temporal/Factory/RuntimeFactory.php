@@ -16,7 +16,6 @@ use OpenTelemetry\SDK\Trace\SpanProcessorFactory;
 use OpenTelemetry\SDK\Trace\TracerProvider;
 use OpenTelemetry\SemConv\ResourceAttributes;
 use Temporal\Interceptor\SimplePipelineProvider;
-use Temporal\OpenTelemetry\Interceptor\OpenTelemetryActivityInboundInterceptor;
 use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowOutboundRequestInterceptor;
 use Temporal\OpenTelemetry\Tracer;
 use Temporal\Worker\WorkerFactoryInterface;
@@ -38,7 +37,6 @@ class RuntimeFactory
         return $workerFactory->newWorker(
             taskQueue: $workflowTaskQueue ?? WorkerFactoryInterface::DEFAULT_TASK_QUEUE,
             interceptorProvider: new SimplePipelineProvider([
-                new OpenTelemetryActivityInboundInterceptor($tracer),
                 new OpenTelemetryWorkflowOutboundRequestInterceptor($tracer),
             ])
         );

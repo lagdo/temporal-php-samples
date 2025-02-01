@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Workflow\Service\Workflow\SimpleBatch;
+namespace App\Workflow\Service\ChildWorkflow\SimpleBatch;
 
 use App\Workflow\Service\Activity\SimpleBatch\SimpleBatchActivityFacade;
 

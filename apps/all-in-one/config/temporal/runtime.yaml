@@ -1,7 +1,7 @@
 parameters:
     # Default value for the Temporal collector endpoint
     env(OTEL_COLLECTOR_ENDPOINT): 'http://collector.addr:4317'
-    env(OTEL_SERVICE_NAME): 'app-workflow-api'
+    env(OTEL_SERVICE_NAME): 'app-temporal-samples'
     # Default value for the Temporal server endpoint
     env(TEMPORAL_SERVER_ENDPOINT): 'http://temporal.addr:7233'
 
@@ -12,10 +12,8 @@ services:
         autowire: true
         bind:
             $container: '@service_container'
-            # Queue for the workflow workers
-            $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
-            # Queue for the activity workers
-            $activityTaskQueue: '%env(ACTIVITY_TASK_QUEUE)%'
+            # Queue for the workflow and activity workers
+            $temporalTaskQueue: '%env(TEMPORAL_TASK_QUEUE)%'
 
     Temporal\OpenTelemetry\Tracer:
         shared: false

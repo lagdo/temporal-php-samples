@@ -10,9 +10,9 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         bind:
             # Queue for the workflow workers
-            $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
+            $workflowTaskQueue: '%env(TEMPORAL_TASK_QUEUE)%'
             # Queue for the activity workers
-            $activityTaskQueue: '%env(ACTIVITY_TASK_QUEUE)%'
+            $activityTaskQueue: '%env(TEMPORAL_TASK_QUEUE)%'
 
     # Workflow client library
     App\Workflow\Client\:

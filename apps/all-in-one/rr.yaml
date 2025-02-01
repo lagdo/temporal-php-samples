@@ -4,7 +4,7 @@ rpc:
   listen: tcp://127.0.0.1:6001
 
 server:
-  command: "php public/index.php"
+  command: "php rr/app.php"
   env:
     APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
   user: "temporal"
@@ -45,6 +45,6 @@ otel:
   client: http
   exporter: otlp
   resource:
-    service_name: run-workflow-api
+    service_name: run-temporal-samples
     service_version: 1.0.0
   endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

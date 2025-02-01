@@ -16,6 +16,12 @@ The API run either with [Nginx Unit](https://unit.nginx.org/), [FrankenPHP](http
 
 The workflow examples are taken from the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), and modified to adapt to the Symfony applications.
 
+## The all-in-one application
+
+The Docker Compose file in the `docker/all-in-one` directory will start a single container running the `apps/all-in-one` Symfony app, which implements the API and a single worker to process both Temporal worlflows and activities.
+
+The RoadRunner server is configured to process incoming HTTP and Temporal requests.
+
 ### Configuration
 
 There are two config files for Temporal in each Symfony app, `config/temporal/runtime.yaml` for the Temporal runtime, and `config/temporal/services.yaml` for the worflows and activities.

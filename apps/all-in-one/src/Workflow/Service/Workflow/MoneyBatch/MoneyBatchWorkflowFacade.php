@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Workflow\MoneyBatch;
 
-use App\Temporal\Factory\AbstractWorkflowFacade;
+use App\Temporal\Facade\AbstractWorkflowFacade;
 
 /**
  * @extends AbstractWorkflowFacade<MoneyBatchWorkflowInterface>

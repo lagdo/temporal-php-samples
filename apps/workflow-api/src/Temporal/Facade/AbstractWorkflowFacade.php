@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Temporal\Factory;
+namespace App\Temporal\Facade;
 
 use Lagdo\Symfony\Facades\AbstractFacade;
 use Temporal\Workflow\WorkflowExecution;

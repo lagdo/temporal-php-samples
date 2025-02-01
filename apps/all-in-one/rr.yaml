@@ -1,0 +1,43 @@
+version: "3"
+
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+server:
+  command: "php public/index.php"
+  env:
+    APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+  user: "temporal"
+  group: "temporal"
+
+http:
+  address: 0.0.0.0:80
+  pool:
+    debug: false
+  middleware: [ "static", "gzip", "otel" ]
+  uploads:
+    forbid: [ ".php", ".exe", ".bat" ]
+  static:
+    dir: "public"
+    forbid: [ ".php", ".htaccess" ]
+
+logs:
+  mode: development
+  channels:
+    http:
+      level: debug # Log all http requests, set to info to disable
+    server:
+      level: info # Everything written to worker stderr is logged
+      mode: raw
+    metrics:
+      level: debug
+
+otel:
+  insecure: true
+  compress: false
+  client: http
+  exporter: otlp
+  resource:
+    service_name: run-workflow-api
+    service_version: 1.0.0
+  endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

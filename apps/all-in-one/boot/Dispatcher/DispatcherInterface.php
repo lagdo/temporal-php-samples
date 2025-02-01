@@ -1,6 +1,6 @@
 <?php
 
-namespace RoadRunner\Dispatcher;
+namespace Boot\Dispatcher;
 
 interface DispatcherInterface
 {

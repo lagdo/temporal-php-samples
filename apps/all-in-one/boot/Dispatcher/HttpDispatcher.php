@@ -1,6 +1,6 @@
 <?php
 
-namespace RoadRunner\Dispatcher;
+namespace Boot\Dispatcher;
 
 use App\Kernel;
 use Baldinof\RoadRunnerBundle\Runtime\Runtime;
@@ -10,7 +10,7 @@ use function dirname;
 final class HttpDispatcher implements DispatcherInterface
 {
     /**
-     * @return never
+     * @return void
      */
     public function serve(): void
     {
@@ -21,9 +21,7 @@ final class HttpDispatcher implements DispatcherInterface
         [$app, $args] = $runtime->getResolver(function (array $context) {
             return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
         })->resolve();
-
         $app = $app(...$args);
-
         $output = $runtime->getRunner($app)->run();
 
         exit($output);

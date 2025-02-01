@@ -4,7 +4,7 @@ rpc:
   listen: tcp://127.0.0.1:6001
 
 server:
-  command: "php rr/app.php"
+  command: "php boot/app.php"
   user: "temporal"
   group: "temporal"
 

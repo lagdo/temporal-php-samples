@@ -1,6 +1,6 @@
 <?php
 
-namespace RoadRunner\Dispatcher;
+namespace Boot\Dispatcher;
 
 use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -9,7 +9,7 @@ use Symfony\Component\Runtime\SymfonyRuntime;
 final class TemporalDispatcher implements DispatcherInterface
 {
     /**
-     * @return never
+     * @return void
      */
     public function serve(): void
     {
@@ -19,14 +19,11 @@ final class TemporalDispatcher implements DispatcherInterface
 
         [$app, $args] = $runtime->getResolver(function (array $context) {
             $kernel = new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
-
             // Set the Temporal command as the default command,
             // and set the application as a single command application.
             return (new Application($kernel))->setDefaultCommand('temporal:runtime:run', true);
         })->resolve();
-
         $app = $app(...$args);
-
         $output = $runtime->getRunner($app)->run();
 
         exit($output);

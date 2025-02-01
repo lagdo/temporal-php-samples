@@ -1,6 +1,6 @@
 <?php
 
-namespace RoadRunner;
+namespace Boot;
 
 enum RoadRunnerMode: string
 {

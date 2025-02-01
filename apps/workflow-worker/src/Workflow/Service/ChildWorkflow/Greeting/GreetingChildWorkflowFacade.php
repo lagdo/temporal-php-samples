@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Workflow\Service\Workflow\Child;
+namespace App\Workflow\Service\ChildWorkflow\Greeting;
 
 use Lagdo\Symfony\Facades\AbstractFacade;
 
-class ChildWorkflowFacade extends AbstractFacade
+class GreetingChildWorkflowFacade extends AbstractFacade
 {
     /**
      * @inheritDoc
      */
     protected static function getServiceIdentifier(): string
     {
-        return ChildWorkflowInterface::class;
+        return GreetingChildWorkflowInterface::class;
     }
 }

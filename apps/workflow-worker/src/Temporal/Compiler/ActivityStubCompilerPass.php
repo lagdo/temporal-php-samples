@@ -15,7 +15,7 @@ use Temporal\Activity\ActivityInterface;
 
 use function count;
 
-class ActivityCompilerPass implements CompilerPassInterface
+class ActivityStubCompilerPass implements CompilerPassInterface
 {
     /**
      * @param ContainerBuilder $container
@@ -26,21 +26,19 @@ class ActivityCompilerPass implements CompilerPassInterface
     {
         // Process the classes that are tagged as activity.
         $activities = $container->findTaggedServiceIds('temporal.service.activity');
-        foreach($activities as $activity => $_)
+        foreach($activities as $activityClassName => $_)
         {
-            $activityClass = new ReflectionClass($activity);
-            if(!$activityClass->isSubclassOf(AbstractFacade::class))
+            $activityClass = new ReflectionClass($activityClassName);
+            if($activityClass->isSubclassOf(AbstractFacade::class))
             {
-                continue;
-            }
-    
-            // A facade doesn't need to be registered in the service container.
-            $container->removeDefinition($activity);
+                // A facade doesn't need to be registered in the service container.
+                $container->removeDefinition($activityClassName);
 
-            if(($activityInterface = $this->getInterfaceFromFacade($activityClass)) !== null)
-            {
-                // The class is a facade. Register a activity stub.
-                $this->registerActivityStub($container, $activityInterface);
+                if(($activityInterface = $this->getInterfaceFromFacade($activityClass)) !== null)
+                {
+                    // The class is a facade on ActivityInterface. Register an activity stub.
+                    $this->registerActivityStub($container, $activityInterface);
+                }
             }
         }
     }
@@ -94,7 +92,7 @@ class ActivityCompilerPass implements CompilerPassInterface
      *
      * @return string
      */
-    public function getOptionsKey(ContainerBuilder $container, ReflectionClass $activityInterface): string
+    private function getOptionsKey(ContainerBuilder $container, ReflectionClass $activityInterface): string
     {
         $attributes = $activityInterface->getAttributes(ActivityOptions::class);
 

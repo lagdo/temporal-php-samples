@@ -1,7 +1,7 @@
 parameters:
     # The value must be the key of an entry in the "services" section.
-    activityDefaultOptions: defaultActivityOptions
     childWorkflowDefaultOptions: defaultChildWorkflowOptions
+    activityDefaultOptions: defaultActivityOptions
 
 services:
     # default configuration for services in *this* file
@@ -20,10 +20,21 @@ services:
         resource: '../../src/Workflow/Service/Workflow/'
         tags: ['temporal.service.workflow']
 
+    App\Workflow\Service\ChildWorkflow\:
+        shared: false
+        resource: '../../src/Workflow/Service/ChildWorkflow/'
+        tags: ['temporal.service.workflow.child']
+
     App\Workflow\Service\Activity\:
         shared: false
         resource: '../../src/Workflow/Service/Activity/'
         tags: ['temporal.service.activity']
+
+    # Options for the child workflow proxies
+    defaultChildWorkflowOptions:
+        shared: false
+        class: 'Temporal\Workflow\ChildWorkflowOptions'
+        factory: ['App\Temporal\Factory\ChildWorkflowFactory', 'defaultOptions']
 
     # Options for the activity proxies
     defaultActivityOptions:
@@ -40,12 +51,6 @@ services:
         shared: false
         class: 'Temporal\Activity\ActivityOptions'
         factory: ['App\Temporal\Factory\ActivityFactory', 'simpleBatchOptions']
-
-    # Options for the workflow proxies
-    defaultChildWorkflowOptions:
-        shared: false
-        class: 'Temporal\Workflow\ChildWorkflowOptions'
-        factory: ['App\Temporal\Factory\WorkflowFactory', 'defaultOptions']
 
     # Activity proxies
     # App\Workflow\Service\Activity\SimpleActivity\GreetingActivityInterface:

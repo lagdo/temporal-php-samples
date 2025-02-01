@@ -7,6 +7,8 @@ server:
   command: "php public/index.php"
   env:
     APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
+  user: "temporal"
+  group: "temporal"
 
 http:
   address: 0.0.0.0:80

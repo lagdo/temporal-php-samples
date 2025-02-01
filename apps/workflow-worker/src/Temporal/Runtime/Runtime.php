@@ -40,14 +40,6 @@ class Runtime implements RuntimeInterface
             $this->worker->registerWorkflowTypes(...$this->workflows);
         }
 
-        // Register the activities
-        foreach($this->activities as $activity)
-        {
-            $this->worker->registerActivity($activity, function(ReflectionClass $class) {
-                return $this->container->get($class->getName());
-            });
-        }
-
         $this->workerFactory->run();
     }
 
@@ -57,13 +49,5 @@ class Runtime implements RuntimeInterface
     public function addWorkflow(string $workflow): void
     {
         $this->workflows[] = $workflow;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addActivity(string $activity): void
-    {
-        $this->activities[] = $activity;
     }
 }

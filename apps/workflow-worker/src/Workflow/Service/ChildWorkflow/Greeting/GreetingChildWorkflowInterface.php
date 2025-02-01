@@ -9,13 +9,13 @@
 
 declare(strict_types=1);
 
-namespace App\Workflow\Service\Workflow\Child;
+namespace App\Workflow\Service\ChildWorkflow\Greeting;
 
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
 
 #[WorkflowInterface]
-interface ChildWorkflowInterface
+interface GreetingChildWorkflowInterface
 {
     /**
      * @return string

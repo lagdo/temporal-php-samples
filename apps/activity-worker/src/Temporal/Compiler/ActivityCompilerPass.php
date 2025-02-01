@@ -21,15 +21,16 @@ class ActivityCompilerPass implements CompilerPassInterface
 
         // Register the classes that are tagged as activity.
         $activities = $container->findTaggedServiceIds('temporal.service.activity');
-        foreach($activities as $activity => $_)
+        foreach($activities as $activityClassName => $_)
         {
-            $activityClass = new ReflectionClass($activity);
+            $activityClass = new ReflectionClass($activityClassName);
             if(!$activityClass->isSubclassOf(AbstractFacade::class))
             {
                 // Set the class as public, because it will need to be fetched
                 // directly from the service container.
-                $container->findDefinition($activity)->setPublic(true);
-                $runtimeDefinition->addMethodCall('addActivity', [$activity]);
+                $container->findDefinition($activityClassName)->setPublic(true);
+                // Register the class as an activity.
+                $runtimeDefinition->addMethodCall('addActivity', [$activityClassName]);
             }
         }
     }

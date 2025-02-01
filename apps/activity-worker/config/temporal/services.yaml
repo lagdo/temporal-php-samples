@@ -6,7 +6,7 @@ services:
         # Automatically injects dependencies in your services.
         autowire: true
 
-    # Application workflows and activities
+    # Application activities
     App\Workflow\Service\Activity\:
         shared: false
         resource: '../../src/Workflow/Service/Activity/'

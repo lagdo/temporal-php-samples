@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Workflow\Service\Workflow\Parent\ParentWorkflowFacade;
+use App\Workflow\Service\Workflow\Parent\GreetingParentWorkflowFacade;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +24,7 @@ class ParentController extends AbstractController
         $workflowArguments = $jsonArguments["args"] ?? [];
         // TODO: validate the input data here
 
-        $workflowExecution = ParentWorkflowFacade::startWorkflow(...$workflowArguments);
+        $workflowExecution = GreetingParentWorkflowFacade::startWorkflow(...$workflowArguments);
 
         return $this->json([
             'workflow' => $workflowExecution->getID(),

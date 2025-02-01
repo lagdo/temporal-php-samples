@@ -9,9 +9,9 @@
 
 declare(strict_types=1);
 
-namespace App\Workflow\Service\Workflow\Child;
+namespace App\Workflow\Service\ChildWorkflow\Greeting;
 
-class ChildWorkflow implements ChildWorkflowInterface
+class GreetingChildWorkflow implements GreetingChildWorkflowInterface
 {
     public function greet(string $name)
     {

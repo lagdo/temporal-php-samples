@@ -11,18 +11,18 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Workflow\Parent;
 
-use App\Workflow\Service\Workflow\Child\ChildWorkflowFacade;
+use App\Workflow\Service\ChildWorkflow\Greeting\GreetingChildWorkflowFacade;
 
 /**
  * Demonstrates a child workflow. Requires a local instance of the Temporal server to be running.
  */
-class ParentWorkflow implements ParentWorkflowInterface
+class GreetingParentWorkflow implements GreetingParentWorkflowInterface
 {
     public function greet(string $name)
     {
         // This is a non blocking call that returns immediately.
         // Use yield ChildWorkflowFacade::greet(name) to call synchronously.
-        $childGreet = ChildWorkflowFacade::greet($name);
+        $childGreet = GreetingChildWorkflowFacade::greet($name);
 
         return "Hello $name from parent; " . yield $childGreet;
     }

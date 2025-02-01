@@ -8,7 +8,7 @@ use ReflectionClass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class WorkflowCompilerPass implements CompilerPassInterface
+class ChildWorkflowCompilerPass implements CompilerPassInterface
 {
     /**
      * @param ContainerBuilder $container
@@ -19,8 +19,8 @@ class WorkflowCompilerPass implements CompilerPassInterface
     {
         $runtimeDefinition = $container->getDefinition(Runtime::class);
 
-        // Register the classes that are tagged as workflow.
-        $workflows = $container->findTaggedServiceIds('temporal.service.workflow');
+        // Register the classes that are tagged as child workflow.
+        $workflows = $container->findTaggedServiceIds('temporal.service.workflow.child');
         foreach($workflows as $workflowClassName => $_)
         {
             $workflowClass = new ReflectionClass($workflowClassName);

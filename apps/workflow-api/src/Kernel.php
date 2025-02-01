@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Temporal\Compiler\WorkflowCompilerPass;
+use App\Temporal\Compiler\WorkflowStubCompilerPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -13,6 +13,6 @@ class Kernel extends BaseKernel
 
     protected function build(ContainerBuilder $container): void
     {
-        $container->addCompilerPass(new WorkflowCompilerPass());
+        $container->addCompilerPass(new WorkflowStubCompilerPass());
     }
 }

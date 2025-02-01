@@ -2,8 +2,9 @@
 
 namespace App\Temporal\Compiler;
 
-use App\Temporal\Attribute\WorkflowOptions;
-use App\Temporal\Factory\WorkflowFactory;
+use App\Temporal\Attribute\ChildWorkflowOptions;
+use App\Temporal\Factory\ChildWorkflowFactory;
+use App\Temporal\Runtime\Runtime;
 use Lagdo\Symfony\Facades\AbstractFacade;
 use ReflectionClass;
 use ReflectionException;
@@ -11,12 +12,11 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Temporal\Client\WorkflowClientInterface;
 use Temporal\Workflow\WorkflowInterface;
 
 use function count;
 
-class WorkflowCompilerPass implements CompilerPassInterface
+class ChildWorkflowStubCompilerPass implements CompilerPassInterface
 {
     /**
      * @param ContainerBuilder $container
@@ -25,23 +25,21 @@ class WorkflowCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        // Process the classes that are tagged as workflow.
-        $workflows = $container->findTaggedServiceIds('temporal.service.workflow');
-        foreach($workflows as $workflow => $_)
+        // Register the classes that are tagged as workflow.
+        $workflows = $container->findTaggedServiceIds('temporal.service.workflow.child');
+        foreach($workflows as $workflowClassName => $_)
         {
-            $workflowClass = new ReflectionClass($workflow);
-            if(!$workflowClass->isSubclassOf(AbstractFacade::class))
+            $workflowClass = new ReflectionClass($workflowClassName);
+            if($workflowClass->isSubclassOf(AbstractFacade::class))
             {
-                continue;
-            }
-    
-            // A facade doesn't need to be registered in the service container.
-            $container->removeDefinition($workflow);
+                // A facade doesn't need to be registered in the service container.
+                $container->removeDefinition($workflowClassName);
 
-            if(($workflowInterface = $this->getInterfaceFromFacade($workflowClass)) !== null)
-            {
-                // The class is a facade. Register a workflow stub.
-                $this->registerWorkflowStub($container, $workflowInterface);
+                if(($workflowInterface = $this->getInterfaceFromFacade($workflowClass)) !== null)
+                {
+                    // The class is a facade on WorkflowInterface. Register a child workflow stub.
+                    $this->registerChildWorkflowStub($container, $workflowInterface);
+                }
             }
         }
     }
@@ -76,16 +74,14 @@ class WorkflowCompilerPass implements CompilerPassInterface
      *
      * @return void
      */
-    private function registerWorkflowStub(ContainerBuilder $container, ReflectionClass $workflowInterface): void
+    private function registerChildWorkflowStub(ContainerBuilder $container, ReflectionClass $workflowInterface): void
     {
         $workflow = $workflowInterface->getName();
-        // The key for the options in the DI container
         $optionsKey = $this->getOptionsKey($container, $workflowInterface);
         $definition = (new Definition($workflow))
-            ->setFactory(WorkflowFactory::class . '::workflowStub')
+            ->setFactory(ChildWorkflowFactory::class . '::childWorkflowStub')
             ->setArgument('$workflow', $workflow)
             ->setArgument('$options', new Reference($optionsKey))
-            ->setArgument('$workflowClient', new Reference(WorkflowClientInterface::class))
             ->setShared(false) // A new instance must be returned each time.
             ->setPublic(true); // The facade needs the service to be public.
         $container->setDefinition($workflow, $definition);
@@ -97,11 +93,11 @@ class WorkflowCompilerPass implements CompilerPassInterface
      *
      * @return string
      */
-    public function getOptionsKey(ContainerBuilder $container, ReflectionClass $workflowInterface): string
+    private function getOptionsKey(ContainerBuilder $container, ReflectionClass $workflowInterface): string
     {
-        $attributes = $workflowInterface->getAttributes(WorkflowOptions::class);
+        $attributes = $workflowInterface->getAttributes(ChildWorkflowOptions::class);
 
         return count($attributes) > 0 ? $attributes[0]->newInstance()->serviceId :
-            $container->getParameter('workflowDefaultOptions');
+            $container->getParameter('childWorkflowDefaultOptions');
     }
 }

@@ -7,15 +7,15 @@ namespace App\Workflow\Service\Workflow\Parent;
 use App\Temporal\Factory\AbstractWorkflowFacade;
 
 /**
- * @extends AbstractWorkflowFacade<ParentWorkflowInterface>
+ * @extends AbstractWorkflowFacade<GreetingParentWorkflowInterface>
  */
-class ParentWorkflowFacade extends AbstractWorkflowFacade
+class GreetingParentWorkflowFacade extends AbstractWorkflowFacade
 {
     /**
      * @inheritDoc
      */
     protected static function getServiceIdentifier(): string
     {
-        return ParentWorkflowInterface::class;
+        return GreetingParentWorkflowInterface::class;
     }
 }

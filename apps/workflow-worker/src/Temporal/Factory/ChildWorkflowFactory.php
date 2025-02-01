@@ -7,7 +7,7 @@ namespace App\Temporal\Factory;
 use Temporal\Workflow\ChildWorkflowOptions;
 use Temporal\Workflow;
 
-class WorkflowFactory
+class ChildWorkflowFactory
 {
     /**
      * @param string $workflowTaskQueue

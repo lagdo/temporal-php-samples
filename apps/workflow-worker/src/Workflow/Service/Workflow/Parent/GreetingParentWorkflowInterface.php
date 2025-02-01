@@ -15,7 +15,7 @@ use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
 
 #[WorkflowInterface]
-interface ParentWorkflowInterface
+interface GreetingParentWorkflowInterface
 {
     /**
      * @return []string

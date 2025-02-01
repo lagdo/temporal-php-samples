@@ -21,8 +21,15 @@ http:
     dir: "public"
     forbid: [ ".php", ".htaccess" ]
 
+temporal:
+  address: ${TEMPORAL_HOST:-temporal.addr}:${TEMPORAL_PORT:-7233}
+  activities:
+    num_workers: 4
+
 logs:
   mode: development
+  output: stdout
+  err_output: stderr
   channels:
     http:
       level: debug # Log all http requests, set to info to disable

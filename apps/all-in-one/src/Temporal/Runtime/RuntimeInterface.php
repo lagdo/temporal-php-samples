@@ -19,4 +19,13 @@ interface RuntimeInterface
      * @return void
      */
     public function addWorkflow(string $workflowClassName): void;
+
+    /**
+     * Register an activity class
+     *
+     * @param string $activityClassName
+     *
+     * @return void
+     */
+    public function addActivity(string $activityClassName): void;
 }

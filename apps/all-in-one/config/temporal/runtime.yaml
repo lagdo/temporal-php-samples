@@ -14,6 +14,8 @@ services:
             $container: '@service_container'
             # Queue for the workflow workers
             $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
+            # Queue for the activity workers
+            $activityTaskQueue: '%env(ACTIVITY_TASK_QUEUE)%'
 
     Temporal\OpenTelemetry\Tracer:
         shared: false

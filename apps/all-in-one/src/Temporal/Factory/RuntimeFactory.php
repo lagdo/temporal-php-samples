@@ -19,6 +19,7 @@ use Temporal\Client\GRPC\ServiceClient;
 use Temporal\Client\WorkflowClient;
 use Temporal\Client\WorkflowClientInterface;
 use Temporal\Interceptor\SimplePipelineProvider;
+use Temporal\OpenTelemetry\Interceptor\OpenTelemetryActivityInboundInterceptor;
 use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowClientCallsInterceptor;
 use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowOutboundRequestInterceptor;
 use Temporal\OpenTelemetry\Tracer;
@@ -42,6 +43,7 @@ class RuntimeFactory
             taskQueue: $workflowTaskQueue ?? WorkerFactoryInterface::DEFAULT_TASK_QUEUE,
             interceptorProvider: new SimplePipelineProvider([
                 new OpenTelemetryWorkflowOutboundRequestInterceptor($tracer),
+                new OpenTelemetryActivityInboundInterceptor($tracer),
             ])
         );
     }

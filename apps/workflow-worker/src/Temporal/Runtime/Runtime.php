@@ -2,7 +2,6 @@
 
 namespace App\Temporal\Runtime;
 
-use ReflectionClass;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Temporal\Worker\WorkerFactoryInterface;
 use Temporal\Worker\WorkerInterface;

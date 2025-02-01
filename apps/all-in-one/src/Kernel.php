@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Temporal\Compiler\ActivityCompilerPass;
 use App\Temporal\Compiler\ActivityStubCompilerPass;
 use App\Temporal\Compiler\ChildWorkflowCompilerPass;
 use App\Temporal\Compiler\ChildWorkflowStubCompilerPass;
@@ -21,6 +22,7 @@ class Kernel extends BaseKernel
         $container->addCompilerPass(new WorkflowStubCompilerPass());
         $container->addCompilerPass(new ChildWorkflowCompilerPass());
         $container->addCompilerPass(new ChildWorkflowStubCompilerPass());
+        $container->addCompilerPass(new ActivityCompilerPass());
         $container->addCompilerPass(new ActivityStubCompilerPass());
     }
 }

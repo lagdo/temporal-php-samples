@@ -20,10 +20,32 @@ use Temporal\Client\WorkflowClient;
 use Temporal\Client\WorkflowClientInterface;
 use Temporal\Interceptor\SimplePipelineProvider;
 use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowClientCallsInterceptor;
+use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowOutboundRequestInterceptor;
 use Temporal\OpenTelemetry\Tracer;
+use Temporal\Worker\WorkerFactoryInterface;
+use Temporal\Worker\WorkerInterface;
 
 class RuntimeFactory
 {
+    /**
+     * @param WorkerFactoryInterface $workerFactory
+     * @param Tracer $tracer
+     * @param string|null $workflowTaskQueue
+     *
+     * @return WorkerInterface
+     */
+    public static function worker(WorkerFactoryInterface $workerFactory,
+        Tracer $tracer, string|null $workflowTaskQueue): WorkerInterface
+    {
+        // Create a worker that listens on a task queue.
+        return $workerFactory->newWorker(
+            taskQueue: $workflowTaskQueue ?? WorkerFactoryInterface::DEFAULT_TASK_QUEUE,
+            interceptorProvider: new SimplePipelineProvider([
+                new OpenTelemetryWorkflowOutboundRequestInterceptor($tracer),
+            ])
+        );
+    }
+
     public static function client(string $serverAddress, Tracer $tracer): WorkflowClientInterface
     {
         return WorkflowClient::create(

@@ -10,6 +10,10 @@ services:
     _defaults:
         # Automatically injects dependencies in your services.
         autowire: true
+        bind:
+            $container: '@service_container'
+            # Queue for the workflow workers
+            $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
 
     Temporal\OpenTelemetry\Tracer:
         shared: false
@@ -25,7 +29,23 @@ services:
         arguments:
             $serverAddress: '%env(TEMPORAL_SERVER_ENDPOINT)%'
 
+    Temporal\WorkerFactory:
+        factory: [null, 'create']
+
+    Temporal\Worker\WorkerFactoryInterface: '@Temporal\WorkerFactory'
+
+    Temporal\Worker\WorkerInterface:
+        factory: ['App\Temporal\Factory\RuntimeFactory', 'worker']
+        shared: false
+
     # Temporal classes
     App\Temporal\:
         shared: false
         resource: '../../src/Temporal/'
+
+    App\Temporal\Runtime\RuntimeInterface: '@App\Temporal\Runtime\Runtime'
+
+when@test:
+    services:
+        Temporal\WorkerFactory:
+            factory: ['Temporal\Testing\WorkerFactory', 'create']

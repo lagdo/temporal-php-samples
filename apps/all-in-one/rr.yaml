@@ -5,8 +5,6 @@ rpc:
 
 server:
   command: "php rr/app.php"
-  env:
-    APP_RUNTIME: Baldinof\RoadRunnerBundle\Runtime\Runtime
   user: "temporal"
   group: "temporal"
 

@@ -2,10 +2,10 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Boot\Dispatcher\DispatcherInterface;
-use Boot\Dispatcher\HttpDispatcher;
-use Boot\Dispatcher\TemporalDispatcher;
-use Boot\RoadRunnerMode;
+use App\RoadRunner\Dispatcher\DispatcherInterface;
+use App\RoadRunner\Dispatcher\HttpDispatcher;
+use App\RoadRunner\Dispatcher\TemporalDispatcher;
+use App\RoadRunner\RoadRunnerMode;
 use Spiral\RoadRunner\Environment;
 
 /**

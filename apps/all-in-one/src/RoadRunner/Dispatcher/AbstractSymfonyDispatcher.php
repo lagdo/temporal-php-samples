@@ -7,7 +7,7 @@ use Closure;
 
 use function dirname;
 
-abstract class SymfonyDispatcher implements DispatcherInterface
+abstract class AbstractSymfonyDispatcher implements DispatcherInterface
 {
     /**
      * Get the Symfony runtime
@@ -26,21 +26,14 @@ abstract class SymfonyDispatcher implements DispatcherInterface
     abstract protected function getResolverClosure(): Closure;
 
     /**
-     * @return array
-     */
-    private function getRuntimeOptions(): array
-    {
-        return ($_SERVER['APP_RUNTIME_OPTIONS'] ?? $_ENV['APP_RUNTIME_OPTIONS'] ?? []) + [
-            'project_dir' => dirname(__DIR__, 3),
-        ];
-    }
-
-    /**
      * @return void
      */
     public function serve(): void
     {
-        $runtime = $this->getRuntime($this->getRuntimeOptions());
+        $runtimeOptions = $_SERVER['APP_RUNTIME_OPTIONS'] ?? $_ENV['APP_RUNTIME_OPTIONS'] ?? [];
+        $runtimeOptions['project_dir'] = dirname(__DIR__, 3);
+
+        $runtime = $this->getRuntime($runtimeOptions);
         [$app, $args] = $runtime->getResolver($this->getResolverClosure())->resolve();
         $app = $app(...$args);
 

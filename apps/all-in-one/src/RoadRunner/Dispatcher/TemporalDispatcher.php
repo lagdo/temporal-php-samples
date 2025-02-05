@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Runtime\SymfonyRuntime;
 use Closure;
 
-final class TemporalDispatcher extends SymfonyDispatcher
+final class TemporalDispatcher extends AbstractSymfonyDispatcher
 {
     /**
      * @inheritDoc

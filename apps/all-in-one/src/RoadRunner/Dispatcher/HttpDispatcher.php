@@ -7,7 +7,7 @@ use Baldinof\RoadRunnerBundle\Runtime\Runtime;
 use Symfony\Component\Runtime\SymfonyRuntime;
 use Closure;
 
-final class HttpDispatcher extends SymfonyDispatcher
+final class HttpDispatcher extends AbstractSymfonyDispatcher
 {
     /**
      * @inheritDoc

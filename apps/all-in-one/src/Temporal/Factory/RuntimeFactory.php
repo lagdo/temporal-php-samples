@@ -48,6 +48,12 @@ class RuntimeFactory
         );
     }
 
+    /**
+     * @param non-empty-string $serverAddress
+     * @param Tracer $tracer
+     *
+     * @return WorkflowClientInterface
+     */
     public static function client(string $serverAddress, Tracer $tracer): WorkflowClientInterface
     {
         return WorkflowClient::create(

@@ -13,10 +13,19 @@ namespace App\Workflow\Service\Workflow\MoneyTransfer;
 
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
+use Generator;
 
 #[WorkflowInterface]
 interface AccountTransferWorkflowInterface
 {
+    /**
+     * @param string $fromAccountId
+     * @param string $toAccountId
+     * @param string $referenceId
+     * @param int $amountCents
+     *
+     * @return Generator|int
+     */
     #[WorkflowMethod(name: "MoneyTransfer")]
-    public function transfer(string $fromAccountId, string $toAccountId, string $referenceId, int $amountCents);
+    public function transfer(string $fromAccountId, string $toAccountId, string $referenceId, int $amountCents): Generator|int;
 }

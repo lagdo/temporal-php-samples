@@ -12,13 +12,17 @@ declare(strict_types=1);
 namespace App\Workflow\Service\Workflow\Parent;
 
 use App\Workflow\Service\ChildWorkflow\Greeting\GreetingChildWorkflowFacade;
+use Generator;
 
 /**
  * Demonstrates a child workflow. Requires a local instance of the Temporal server to be running.
  */
 class GreetingParentWorkflow implements GreetingParentWorkflowInterface
 {
-    public function greet(string $name)
+    /**
+     * @inheritDoc
+     */
+    public function greet(string $name): Generator
     {
         // This is a non blocking call that returns immediately.
         // Use yield ChildWorkflowFacade::greet(name) to call synchronously.

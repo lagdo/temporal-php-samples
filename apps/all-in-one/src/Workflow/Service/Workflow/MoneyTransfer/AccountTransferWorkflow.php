@@ -13,10 +13,14 @@ namespace App\Workflow\Service\Workflow\MoneyTransfer;
 
 use App\Workflow\Service\Activity\MoneyTransfer\AccountActivityFacade;
 use App\Workflow\Service\Activity\MoneyTransfer\AccountActivityInterface;
+use Generator;
 
 class AccountTransferWorkflow implements AccountTransferWorkflowInterface
 {
-    public function transfer(string $fromAccountId, string $toAccountId, string $referenceId, int $amountCents)
+    /**
+     * @inheritDoc
+     */
+    public function transfer(string $fromAccountId, string $toAccountId, string $referenceId, int $amountCents): Generator
     {
         /**
          * @var AccountActivityInterface

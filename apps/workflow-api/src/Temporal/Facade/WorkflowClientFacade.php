@@ -7,6 +7,9 @@ namespace App\Temporal\Facade;
 use Lagdo\Symfony\Facades\AbstractFacade;
 use Temporal\Client\WorkflowClientInterface;
 
+/**
+ * @mixin WorkflowClientInterface
+ */
 class WorkflowClientFacade extends AbstractFacade
 {
     /**

@@ -6,6 +6,9 @@ namespace App\Workflow\Service\Activity\SimpleActivity;
 
 use Lagdo\Symfony\Facades\AbstractFacade;
 
+/**
+ * @mixin GreetingActivityInterface
+ */
 class GreetingActivityFacade extends AbstractFacade
 {
     /**

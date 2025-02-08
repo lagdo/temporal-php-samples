@@ -7,6 +7,7 @@ namespace App\Workflow\Service\Workflow\MoneyTransfer;
 use App\Temporal\Facade\AbstractWorkflowFacade;
 
 /**
+ * @mixin AccountTransferWorkflowInterface
  * @extends AbstractWorkflowFacade<AccountTransferWorkflowInterface>
  */
 class AccountTransferWorkflowFacade extends AbstractWorkflowFacade

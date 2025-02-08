@@ -49,11 +49,12 @@ class WorkflowFactory
     /**
      * Factory for workflow stubs
      *
-     * @param string $workflow
+     * @template T of object
+     * @psalm-param class-string<T> $workflow
      * @param WorkflowOptions $options
      * @param WorkflowClientInterface $workflowClient
      *
-     * @return mixed
+     * @return T
      */
     public static function workflowStub(string $workflow, WorkflowOptions $options,
         WorkflowClientInterface $workflowClient): mixed

@@ -21,7 +21,7 @@ class SimpleBatchService
     /**
      * @param int $batchId
      *
-     * @return array
+     * @return array<int,int>
      */
     private function getItemIds(int $batchId): array
     {
@@ -33,7 +33,7 @@ class SimpleBatchService
     /**
      * @param int $batchId
      *
-     * @return array
+     * @return array<int,string|int>
      */
     private function getOptions(int $batchId): array
     {
@@ -43,7 +43,7 @@ class SimpleBatchService
     /**
      * @param int $batchId
      *
-     * @return array
+     * @return array<array<int,string|int>>
      */
     public function getBatchItemIds(int $batchId): array
     {
@@ -53,7 +53,7 @@ class SimpleBatchService
     /**
      * @param int $itemId
      * @param int $batchId
-     * @param array $options
+     * @param array<int,string|int> $options
      *
      * @return void
      */
@@ -65,7 +65,7 @@ class SimpleBatchService
     /**
      * @param int $itemId
      * @param int $batchId
-     * @param array $options
+     * @param array<int,string|int> $options
      *
      * @return int
      * @throws Exception
@@ -88,7 +88,7 @@ class SimpleBatchService
     /**
      * @param int $itemId
      * @param int $batchId
-     * @param array $options
+     * @param array<int,string|int> $options
      *
      * @return void
      */

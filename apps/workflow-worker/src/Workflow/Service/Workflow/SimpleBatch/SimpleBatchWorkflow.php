@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Workflow\Service\Workflow\SimpleBatch;
 
 use App\Workflow\Service\Activity\SimpleBatch\SimpleBatchActivityFacade as ActivityFacade;
+use React\Promise\FulfilledPromise;
 use Temporal\Promise;
 use Temporal\Workflow;
+use Generator;
 use Throwable;
 
 use function array_filter;
@@ -15,19 +17,19 @@ use function array_keys;
 class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
 {
     /**
-     * @var array
+     * @var array<array<string|bool>>
      */
     private $results = [];
 
     /**
-     * @var array
+     * @var array<int,bool>
      */
     private $pending = [];
 
     /**
      * @inheritDoc
      */
-    public function start(int $batchId)
+    public function start(int $batchId): Generator
     {
         [$itemIds, $options] = yield ActivityFacade::getBatchItemIds($batchId);
 
@@ -35,7 +37,8 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
         foreach($itemIds as $itemId)
         {
             $this->pending[$itemId] = true;
-            $promises[$itemId] = Workflow::async(
+            /** @var FulfilledPromise */
+            $promise = Workflow::async(
                 function() use($itemId, $batchId, $options) {
                     // Set the item processing as started.
                     yield ActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
@@ -58,10 +61,10 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
                     'success' => false,
                     'message' => $e->getMessage(),
                 ]
-            )
+            );
             // We are calling always() instead of finally() because the Temporal PHP SDK depends on
             // react/promise 2.9. Will need to change to finally() when upgrading to react/promise 3.x.
-            ->always(fn() => $this->pending[$itemId] = false);
+            $promises[$itemId] = $promise->always(fn() => $this->pending[$itemId] = false);
             // $promises[$itemId] = SimpleBatchChildWorkflowFacade::processItem($itemId, $batchId, $options);
         }
 

@@ -40,7 +40,7 @@ class MoneyTransferService
      * @param string $message
      * @param mixed ...$arg
      */
-    public function log(string $message, ...$arg)
+    public function log(string $message, ...$arg): void
     {
         $this->logger->debug(sprintf($message, ...$arg));
     }

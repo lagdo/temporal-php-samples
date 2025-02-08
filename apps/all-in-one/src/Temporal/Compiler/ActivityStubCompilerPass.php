@@ -14,7 +14,11 @@ use Symfony\Component\DependencyInjection\Reference;
 use Temporal\Activity\ActivityInterface;
 
 use function count;
+use function is_string;
 
+/**
+ * @template I of object
+ */
 class ActivityStubCompilerPass implements CompilerPassInterface
 {
     /**
@@ -25,6 +29,7 @@ class ActivityStubCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         // Process the classes that are tagged as activity.
+        /** @var array<class-string,mixed> */
         $activities = $container->findTaggedServiceIds('temporal.service.activity');
         foreach($activities as $activityClassName => $_)
         {
@@ -44,9 +49,10 @@ class ActivityStubCompilerPass implements CompilerPassInterface
     }
 
     /**
-     * @param ReflectionClass $activityClass
+     * @template T of object
+     * @param ReflectionClass<T> $activityClass
      *
-     * @return ReflectionClass|null
+     * @return ReflectionClass<I>|null
      */
     private function getInterfaceFromFacade(ReflectionClass $activityClass): ?ReflectionClass
     {
@@ -55,6 +61,7 @@ class ActivityStubCompilerPass implements CompilerPassInterface
             // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
             $serviceIdentifierMethod = $activityClass->getMethod('getServiceIdentifier');
             $serviceIdentifierMethod->setAccessible(true);
+            /** @var class-string<I> */
             $activityInterfaceName = $serviceIdentifierMethod->invoke(null);
             $activityInterface = new ReflectionClass($activityInterfaceName);
 
@@ -68,8 +75,9 @@ class ActivityStubCompilerPass implements CompilerPassInterface
     }
 
     /**
+     * @template T of object
      * @param ContainerBuilder $container
-     * @param ReflectionClass $activityInterface
+     * @param ReflectionClass<T> $activityInterface
      *
      * @return void
      */
@@ -87,16 +95,21 @@ class ActivityStubCompilerPass implements CompilerPassInterface
     }
 
     /**
+     * @template T of object
      * @param ContainerBuilder $container
-     * @param ReflectionClass $activityInterface
+     * @param ReflectionClass<T> $activityInterface
      *
      * @return string
      */
     private function getOptionsKey(ContainerBuilder $container, ReflectionClass $activityInterface): string
     {
         $attributes = $activityInterface->getAttributes(ActivityOptions::class);
+        if(count($attributes) > 0)
+        {
+            return $attributes[0]->newInstance()->serviceId;
+        }
 
-        return count($attributes) > 0 ? $attributes[0]->newInstance()->serviceId :
-            $container->getParameter('activityDefaultOptions');
+        $parameter = $container->getParameter('activityDefaultOptions');
+        return is_string($parameter) ? $parameter : 'defaultActivityOptions';
     }
 }

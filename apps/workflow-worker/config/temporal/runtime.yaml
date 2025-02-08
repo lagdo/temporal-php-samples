@@ -9,7 +9,6 @@ services:
         # Automatically injects dependencies in your services.
         autowire: true
         bind:
-            $container: '@service_container'
             # Queue for the workflow workers
             $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
 

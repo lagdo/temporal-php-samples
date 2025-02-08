@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\ChildWorkflow\SimpleBatch;
 
-use Generator;
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
+use Generator;
 
 #[WorkflowInterface]
 interface SimpleBatchChildWorkflowInterface
@@ -21,10 +21,10 @@ interface SimpleBatchChildWorkflowInterface
     /**
      * @param int $itemId
      * @param int $batchId
-     * @param array $options
+     * @param array<string|int> $options
      *
      * @return Generator
      */
     #[WorkflowMethod(name: "SimpleBatch.processItem")]
-    public function processItem(int $itemId, int $batchId, array $options);
+    public function processItem(int $itemId, int $batchId, array $options): Generator;
 }

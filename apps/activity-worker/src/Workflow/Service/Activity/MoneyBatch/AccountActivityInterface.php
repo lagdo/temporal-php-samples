@@ -11,14 +11,26 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\Activity\MoneyBatch;
 
-use App\Temporal\Attribute\ActivityOptions;
 use Temporal\Activity\ActivityInterface;
 
 #[ActivityInterface(prefix: "MoneyBatch.")]
-#[ActivityOptions(serviceId: "moneyBatchActivityOptions")]
 interface AccountActivityInterface
 {
-    public function deposit(string $accountId, string $referenceId, int $amountCents): void;
+    /**
+     * @param string $accountId
+     * @param string $referenceId
+     * @param int $amountCents
+     *
+     * @return int
+     */
+    public function deposit(string $accountId, string $referenceId, int $amountCents): int;
 
-    public function withdraw(string $accountId, string $referenceId, int $amountCents): void;
+    /**
+     * @param string $accountId
+     * @param string $referenceId
+     * @param int $amountCents
+     *
+     * @return int
+     */
+    public function withdraw(string $accountId, string $referenceId, int $amountCents): int;
 }

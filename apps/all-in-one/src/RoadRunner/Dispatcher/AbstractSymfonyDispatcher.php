@@ -12,7 +12,7 @@ abstract class AbstractSymfonyDispatcher implements DispatcherInterface
     /**
      * Get the Symfony runtime
      *
-     * @param array $runtimeOptions
+     * @param array<string,string|int> $runtimeOptions
      *
      * @return SymfonyRuntime
      */

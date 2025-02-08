@@ -8,12 +8,12 @@ use Lagdo\Symfony\Facades\AbstractFacade;
 use Temporal\Workflow\WorkflowExecution;
 
 /**
- * @template WorkflowType
+ * @template WorkflowType of object
  */
 abstract class AbstractWorkflowFacade extends AbstractFacade
 {
     /**
-     * @param array $workflowArguments
+     * @param mixed $workflowArguments
      *
      * @return WorkflowExecution
      */
@@ -29,10 +29,12 @@ abstract class AbstractWorkflowFacade extends AbstractFacade
      *
      * @return WorkflowType
      */
-    public static function getRunningWorkflow(string $workflowId)
+    public static function getRunningWorkflow(string $workflowId): mixed
     {
         // The `getServiceIdentifier()` static method is implemented in a child class.
         // It is called with the `static` keyword.
-        return WorkflowClientFacade::newRunningWorkflowStub(static::getServiceIdentifier(), $workflowId);
+        /** @psalm-var class-string<WorkflowType> $serviceIdentifier */
+        $serviceIdentifier = static::getServiceIdentifier();
+        return WorkflowClientFacade::newRunningWorkflowStub($serviceIdentifier, $workflowId);
     }
 }

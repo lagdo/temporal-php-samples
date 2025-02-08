@@ -14,23 +14,23 @@ interface SimpleBatchActivityInterface
     /**
      * @param int $batchId
      *
-     * @return array
+     * @return array<array<int,string|int>>
      */
     public function getBatchItemIds(int $batchId): array;
 
     /**
      * @param int $itemId
      * @param int $batchId
-     * @param array $options
+     * @param array<string|int> $options
      *
-     * @return void
+     * @return bool
      */
     public function itemProcessingStarted(int $itemId, int $batchId, array $options): bool;
 
     /**
      * @param int $itemId
      * @param int $batchId
-     * @param array $options
+     * @param array<string|int> $options
      *
      * @return int
      */
@@ -39,9 +39,9 @@ interface SimpleBatchActivityInterface
     /**
      * @param int $itemId
      * @param int $batchId
-     * @param array $options
+     * @param array<string|int> $options
      *
-     * @return void
+     * @return bool
      */
     public function itemProcessingEnded(int $itemId, int $batchId, array $options): bool;
 }

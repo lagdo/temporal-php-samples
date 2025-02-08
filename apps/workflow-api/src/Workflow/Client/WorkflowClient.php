@@ -27,14 +27,14 @@ class WorkflowClient
      *
      * @param HistoryEvent $event
      *
-     * @return array
+     * @return array<string,string|int>
      */
     private function format(HistoryEvent $event): array
     {
         return [
             'task' => $event->getTaskId(),
             'type' => $event->getEventType(),
-            'timestamp' => $event->getEventTime()->toDateTime()->format('Y-m-d H:i:s'),
+            'timestamp' => $event->getEventTime()?->toDateTime()->format('Y-m-d H:i:s') ?? '',
         ];
     }
 
@@ -42,18 +42,18 @@ class WorkflowClient
      * @param string $workflowId
      * @param string $runId
      *
-     * @return array|null
+     * @return array<array<string,string|int>>|null
      */
     public function getWorkflowEvents(string $workflowId, string $runId): ?array
     {
-        $workflowExecution = $this->workflowClient
-            ->newUntypedRunningWorkflowStub($workflowId, $runId)?->getExecution();
-        if(!$workflowExecution)
+        $workflow = $this->workflowClient
+            ->newUntypedRunningWorkflowStub($workflowId, $runId);
+        if(!$workflow->hasExecution())
         {
             return null;
         }
 
-        $workflowHistory = $this->workflowClient->getWorkflowHistory($workflowExecution);
+        $workflowHistory = $this->workflowClient->getWorkflowHistory($workflow->getExecution());
 
         $events = [];
         foreach($workflowHistory->getEvents() as $event)

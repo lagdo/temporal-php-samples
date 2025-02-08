@@ -6,6 +6,9 @@ namespace App\Workflow\Service\ChildWorkflow\SimpleBatch;
 
 use Lagdo\Symfony\Facades\AbstractFacade;
 
+/**
+ * @mixin SimpleBatchChildWorkflowInterface
+ */
 class SimpleBatchChildWorkflowFacade extends AbstractFacade
 {
     /**

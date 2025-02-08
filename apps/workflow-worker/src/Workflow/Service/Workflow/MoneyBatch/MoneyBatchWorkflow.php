@@ -14,16 +14,20 @@ namespace App\Workflow\Service\Workflow\MoneyBatch;
 use App\Workflow\Service\Activity\MoneyBatch\AccountActivityFacade;
 use Temporal\Common\Uuid;
 use Temporal\Workflow;
+use Generator;
 
 class MoneyBatchWorkflow implements MoneyBatchWorkflowInterface
 {
+    /**
+     * @var array<string>
+     */
     private array $references = [];
 
     private int $balance = 0;
 
     private int $count = 0;
 
-    public function deposit(string $toAccountId, int $batchSize)
+    public function deposit(string $toAccountId, int $batchSize): Generator
     {
         // wait for the completion of all transfers
         yield Workflow::await(fn() => $this->count === $batchSize);
@@ -33,7 +37,7 @@ class MoneyBatchWorkflow implements MoneyBatchWorkflowInterface
         yield AccountActivityFacade::deposit($toAccountId, $referenceID, $this->balance);
     }
 
-    public function withdraw(string $fromAccountId, string $referenceId, int $amountCents)
+    public function withdraw(string $fromAccountId, string $referenceId, int $amountCents): Generator
     {
         if (isset($this->references[$referenceId])) {
             // duplicate

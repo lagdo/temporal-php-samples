@@ -45,13 +45,14 @@ class SimpleBatchController extends AbstractController
         $workflow = SimpleBatchWorkflowFacade::getRunningWorkflow($workflowId);
         $results = $workflow->getResults();
         $pending = $workflow->getPending();
+        $failedCount = count(array_filter($results, fn(array $result) => !$result['success']));
 
         return $this->json([
             'count' => [
                 'pending' => count($pending),
                 'results' => count($results),
-                'succeeded' => count(array_filter($results, fn($result) => $result['success'])),
-                'failed' => count(array_filter($results, fn($result) => !$result['success'])),
+                'succeeded' => count($results) - $failedCount,
+                'failed' => $failedCount,
             ],
             'items' => [
                 'pending' => $pending,

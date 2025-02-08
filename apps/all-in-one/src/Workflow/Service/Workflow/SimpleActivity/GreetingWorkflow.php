@@ -12,11 +12,15 @@ declare(strict_types=1);
 namespace App\Workflow\Service\Workflow\SimpleActivity;
 
 use App\Workflow\Service\Activity\SimpleActivity\GreetingActivityFacade;
+use Generator;
 
 // @@@SNIPSTART php-hello-workflow
 class GreetingWorkflow implements GreetingWorkflowInterface
 {
-    public function greet(string $name): \Generator
+    /**
+     * @inheritDoc
+     */
+    public function greet(string $name): Generator
     {
         // This is a blocking call that returns only after the activity has completed.
         return yield GreetingActivityFacade::composeGreeting('Hello', $name);

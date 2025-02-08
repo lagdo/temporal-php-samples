@@ -68,10 +68,11 @@ class ActivityFactory
     /**
      * Factory for activity stubs
      *
-     * @param string $activity
+     * @template T of object
+     * @psalm-param class-string<T> $activity
      * @param ActivityOptions $options
      *
-     * @return mixed
+     * @return T
      */
     public static function activityStub(string $activity, ActivityOptions $options): mixed
     {

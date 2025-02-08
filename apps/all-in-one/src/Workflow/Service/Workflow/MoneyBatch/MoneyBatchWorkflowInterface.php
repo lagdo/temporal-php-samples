@@ -16,20 +16,33 @@ use Temporal\Workflow\QueryMethod;
 use Temporal\Workflow\SignalMethod;
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
+use Generator;
 
 #[WorkflowInterface]
 #[WorkflowOptions(serviceId: "moneyBatchWorkflowOptions")]
 interface MoneyBatchWorkflowInterface
 {
+    /**
+     * @return Generator
+     */
     #[WorkflowMethod(name: "MoneyBatch")]
-    public function deposit(string $toAccountId, int $batchSize);
+    public function deposit(string $toAccountId, int $batchSize): Generator;
 
+    /**
+     * @return Generator
+     */
     #[SignalMethod]
-    public function withdraw(string $fromAccountId, string $referenceId, int $amountCents);
+    public function withdraw(string $fromAccountId, string $referenceId, int $amountCents): Generator;
 
+    /**
+     * @return int
+     */
     #[QueryMethod]
     public function getBalance(): int;
 
+    /**
+     * @return int
+     */
     #[QueryMethod]
     public function getCount(): int;
 }

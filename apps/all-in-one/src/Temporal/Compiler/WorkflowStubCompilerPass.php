@@ -15,7 +15,11 @@ use Temporal\Client\WorkflowClientInterface;
 use Temporal\Workflow\WorkflowInterface;
 
 use function count;
+use function is_string;
 
+/**
+ * @template I of object
+ */
 class WorkflowStubCompilerPass implements CompilerPassInterface
 {
     /**
@@ -26,6 +30,7 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         // Process the classes that are tagged as workflow.
+        /** @var array<class-string,mixed> */
         $workflows = $container->findTaggedServiceIds('temporal.service.workflow');
         foreach($workflows as $workflowClassName => $_)
         {
@@ -45,9 +50,10 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
     }
 
     /**
-     * @param ReflectionClass $workflowClass
+     * @template T of object
+     * @param ReflectionClass<T> $workflowClass
      *
-     * @return ReflectionClass|null
+     * @return ReflectionClass<I>|null
      */
     private function getInterfaceFromFacade(ReflectionClass $workflowClass): ?ReflectionClass
     {
@@ -56,6 +62,7 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
             // Call the protected "getServiceIdentifier()" method of the facade to get the service id.
             $serviceIdentifierMethod = $workflowClass->getMethod('getServiceIdentifier');
             $serviceIdentifierMethod->setAccessible(true);
+            /** @var class-string<I> */
             $workflowInterfaceName = $serviceIdentifierMethod->invoke(null);
             $workflowInterface = new ReflectionClass($workflowInterfaceName);
 
@@ -69,8 +76,9 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
     }
 
     /**
+     * @template T of object
      * @param ContainerBuilder $container
-     * @param ReflectionClass $workflowInterface
+     * @param ReflectionClass<T> $workflowInterface
      *
      * @return void
      */
@@ -90,16 +98,21 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
     }
 
     /**
+     * @template T of object
      * @param ContainerBuilder $container
-     * @param ReflectionClass $workflowInterface
+     * @param ReflectionClass<T> $workflowInterface
      *
      * @return string
      */
     public function getOptionsKey(ContainerBuilder $container, ReflectionClass $workflowInterface): string
     {
         $attributes = $workflowInterface->getAttributes(WorkflowOptions::class);
+        if(count($attributes) > 0)
+        {
+            return $attributes[0]->newInstance()->serviceId;
+        }
 
-        return count($attributes) > 0 ? $attributes[0]->newInstance()->serviceId :
-            $container->getParameter('workflowDefaultOptions');
+        $parameter = $container->getParameter('workflowDefaultOptions');
+        return is_string($parameter) ? $parameter : 'defaultWorkflowOptions';
     }
 }

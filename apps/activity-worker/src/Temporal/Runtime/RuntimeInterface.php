@@ -14,7 +14,7 @@ interface RuntimeInterface
     /**
      * Register an activity class
      *
-     * @param string $activityClassName
+     * @param class-string $activityClassName
      *
      * @return void
      */

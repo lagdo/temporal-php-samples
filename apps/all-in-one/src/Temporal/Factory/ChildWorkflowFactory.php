@@ -23,10 +23,11 @@ class ChildWorkflowFactory
     /**
      * Factory for workflow stubs
      *
-     * @param string $workflow
+     * @template T of object
+     * @psalm-param class-string<T> $workflow
      * @param ChildWorkflowOptions $options
      *
-     * @return mixed
+     * @return T
      */
     public static function childWorkflowStub(string $workflow, ChildWorkflowOptions $options): mixed
     {

@@ -21,5 +21,5 @@ interface GreetingChildWorkflowInterface
      * @return string
      */
     #[WorkflowMethod(name: "Child.greet")]
-    public function greet(string $name);
+    public function greet(string $name): string;
 }

@@ -13,7 +13,7 @@ namespace App\Workflow\Service\ChildWorkflow\Greeting;
 
 class GreetingChildWorkflow implements GreetingChildWorkflowInterface
 {
-    public function greet(string $name)
+    public function greet(string $name): string
     {
         return "Hello $name from child workflow!";
     }

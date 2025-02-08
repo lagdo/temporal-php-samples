@@ -7,6 +7,7 @@ namespace App\Workflow\Service\Workflow\SimpleBatch;
 use App\Temporal\Facade\AbstractWorkflowFacade;
 
 /**
+ * @mixin SimpleBatchWorkflowInterface
  * @extends AbstractWorkflowFacade<SimpleBatchWorkflowInterface>
  */
 class SimpleBatchWorkflowFacade extends AbstractWorkflowFacade

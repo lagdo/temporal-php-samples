@@ -20,6 +20,7 @@ class ActivityCompilerPass implements CompilerPassInterface
         $runtimeDefinition = $container->getDefinition(Runtime::class);
 
         // Register the classes that are tagged as activity.
+        /** @var array<class-string,mixed> */
         $activities = $container->findTaggedServiceIds('temporal.service.activity');
         foreach($activities as $activityClassName => $_)
         {

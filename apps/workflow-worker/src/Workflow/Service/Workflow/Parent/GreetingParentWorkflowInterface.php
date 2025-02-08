@@ -13,13 +13,16 @@ namespace App\Workflow\Service\Workflow\Parent;
 
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
+use Generator;
 
 #[WorkflowInterface]
 interface GreetingParentWorkflowInterface
 {
     /**
-     * @return []string
+     * @param string $name
+     *
+     * @return Generator
      */
     #[WorkflowMethod(name: "Parent.greet")]
-    public function greet(string $name);
+    public function greet(string $name): Generator;
 }

@@ -18,7 +18,21 @@ use Temporal\Activity\ActivityInterface;
 #[ActivityOptions(serviceId: "defaultActivityOptions")]
 interface AccountActivityInterface
 {
-    public function deposit(string $accountId, string $referenceId, int $amountCents): void;
+    /**
+     * @param string $accountId
+     * @param string $referenceId
+     * @param int $amountCents
+     *
+     * @return int
+     */
+    public function deposit(string $accountId, string $referenceId, int $amountCents): int;
 
-    public function withdraw(string $accountId, string $referenceId, int $amountCents): void;
+    /**
+     * @param string $accountId
+     * @param string $referenceId
+     * @param int $amountCents
+     *
+     * @return int
+     */
+    public function withdraw(string $accountId, string $referenceId, int $amountCents): int;
 }

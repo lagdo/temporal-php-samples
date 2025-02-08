@@ -2,7 +2,6 @@
 
 namespace App\Temporal\Runtime;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Temporal\Worker\WorkerFactoryInterface;
 use Temporal\Worker\WorkerInterface;
 
@@ -17,14 +16,7 @@ class Runtime implements RuntimeInterface
      */
     private array $workflows = [];
 
-    /**
-     * Activity class names
-     *
-     * @var array<class-string>
-     */
-    private array $activities = [];
-
-    public function __construct(private ContainerInterface $container, private WorkerInterface $worker,
+    public function __construct(private WorkerInterface $worker,
         private WorkerFactoryInterface $workerFactory)
     {}
 

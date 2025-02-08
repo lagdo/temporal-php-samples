@@ -22,26 +22,20 @@ class AccountActivity implements AccountActivityInterface
     {}
 
     /**
-     * @param string $accountId
-     * @param string $referenceId
-     * @param int $amountCents
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function deposit(string $accountId, string $referenceId, int $amountCents): void
+    public function deposit(string $accountId, string $referenceId, int $amountCents): int
     {
         $this->moneyTransferService->deposit($accountId, $referenceId, $amountCents);
+        return $amountCents;
     }
 
     /**
-     * @param string $accountId
-     * @param string $referenceId
-     * @param int $amountCents
-     *
-     * @return void
+     * @inheritDoc
      */
-    public function withdraw(string $accountId, string $referenceId, int $amountCents): void
+    public function withdraw(string $accountId, string $referenceId, int $amountCents): int
     {
         $this->moneyTransferService->withdraw($accountId, $referenceId, $amountCents);
+        return $amountCents;
     }
 }

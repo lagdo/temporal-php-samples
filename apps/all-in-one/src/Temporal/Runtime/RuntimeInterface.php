@@ -14,7 +14,7 @@ interface RuntimeInterface
     /**
      * Register a workflow class
      *
-     * @param string $workflowClassName
+     * @param class-string $workflowClassName
      *
      * @return void
      */
@@ -23,7 +23,7 @@ interface RuntimeInterface
     /**
      * Register an activity class
      *
-     * @param string $activityClassName
+     * @param class-string $activityClassName
      *
      * @return void
      */

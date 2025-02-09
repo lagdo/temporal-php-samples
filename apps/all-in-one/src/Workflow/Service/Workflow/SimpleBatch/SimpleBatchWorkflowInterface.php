@@ -28,11 +28,11 @@ interface SimpleBatchWorkflowInterface
      * @return array<array<string|bool>>
      */
     #[QueryMethod]
-    public function getResults(): array;
+    public function getAvailableResults(): array;
 
     /**
      * @return array<int>
      */
     #[QueryMethod]
-    public function getPending(): array;
+    public function getPendingTasks(): array;
 }

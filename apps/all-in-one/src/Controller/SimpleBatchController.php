@@ -43,8 +43,8 @@ class SimpleBatchController extends AbstractController
     public function getStatus(string $workflowId): JsonResponse
     {
         $workflow = SimpleBatchWorkflowFacade::getRunningWorkflow($workflowId);
-        $results = $workflow->getResults();
-        $pending = $workflow->getPending();
+        $results = $workflow->getAvailableResults();
+        $pending = $workflow->getPendingTasks();
         $failedCount = count(array_filter($results, fn(array $result) => !$result['success']));
 
         return $this->json([
@@ -54,7 +54,7 @@ class SimpleBatchController extends AbstractController
                 'succeeded' => count($results) - $failedCount,
                 'failed' => $failedCount,
             ],
-            'items' => [
+            'tasks' => [
                 'pending' => $pending,
                 'results' => $results,
             ],

@@ -77,7 +77,7 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     /**
      * @inheritDoc
      */
-    public function getResults(): array
+    public function getAvailableResults(): array
     {
         return $this->results;
     }
@@ -85,7 +85,7 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     /**
      * @inheritDoc
      */
-    public function getPending(): array
+    public function getPendingTasks(): array
     {
         return array_keys(array_filter($this->pending, fn($pending) => $pending));
     }

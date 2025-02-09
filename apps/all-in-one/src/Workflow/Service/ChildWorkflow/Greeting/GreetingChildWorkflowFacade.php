@@ -7,7 +7,7 @@ namespace App\Workflow\Service\ChildWorkflow\Greeting;
 use Lagdo\Symfony\Facades\AbstractFacade;
 
 /**
- * @mixin GreetingChildWorkflowInterface
+ * @extends AbstractFacade<GreetingChildWorkflowInterface>
  */
 class GreetingChildWorkflowFacade extends AbstractFacade
 {

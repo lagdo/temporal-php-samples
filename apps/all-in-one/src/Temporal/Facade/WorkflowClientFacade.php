@@ -8,7 +8,7 @@ use Lagdo\Symfony\Facades\AbstractFacade;
 use Temporal\Client\WorkflowClientInterface;
 
 /**
- * @mixin WorkflowClientInterface
+ * @extends AbstractFacade<WorkflowClientInterface>
  */
 class WorkflowClientFacade extends AbstractFacade
 {

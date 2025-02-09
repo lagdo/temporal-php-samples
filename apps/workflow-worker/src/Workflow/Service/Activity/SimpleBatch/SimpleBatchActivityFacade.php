@@ -7,7 +7,7 @@ namespace App\Workflow\Service\Activity\SimpleBatch;
 use Lagdo\Symfony\Facades\AbstractFacade;
 
 /**
- * @mixin SimpleBatchActivityInterface
+ * @extends AbstractFacade<SimpleBatchActivityInterface>
  */
 class SimpleBatchActivityFacade extends AbstractFacade
 {

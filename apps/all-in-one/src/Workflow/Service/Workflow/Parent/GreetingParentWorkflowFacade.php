@@ -7,7 +7,6 @@ namespace App\Workflow\Service\Workflow\Parent;
 use App\Temporal\Facade\AbstractWorkflowFacade;
 
 /**
- * @mixin GreetingParentWorkflowInterface
  * @extends AbstractWorkflowFacade<GreetingParentWorkflowInterface>
  */
 class GreetingParentWorkflowFacade extends AbstractWorkflowFacade

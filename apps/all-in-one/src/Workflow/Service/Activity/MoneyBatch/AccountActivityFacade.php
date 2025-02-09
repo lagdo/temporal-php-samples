@@ -7,7 +7,7 @@ namespace App\Workflow\Service\Activity\MoneyBatch;
 use Lagdo\Symfony\Facades\AbstractFacade;
 
 /**
- * @mixin AccountActivityInterface
+ * @extends AbstractFacade<AccountActivityInterface>
  */
 class AccountActivityFacade extends AbstractFacade
 {

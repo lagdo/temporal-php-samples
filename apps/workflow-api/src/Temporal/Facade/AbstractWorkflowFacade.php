@@ -9,6 +9,7 @@ use Temporal\Workflow\WorkflowExecution;
 
 /**
  * @template WorkflowType of object
+ * @extends AbstractFacade<WorkflowType>
  */
 abstract class AbstractWorkflowFacade extends AbstractFacade
 {

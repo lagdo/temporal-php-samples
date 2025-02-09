@@ -7,7 +7,6 @@ namespace App\Workflow\Service\Workflow\MoneyBatch;
 use App\Temporal\Facade\AbstractWorkflowFacade;
 
 /**
- * @mixin MoneyBatchWorkflowInterface
  * @extends AbstractWorkflowFacade<MoneyBatchWorkflowInterface>
  */
 class MoneyBatchWorkflowFacade extends AbstractWorkflowFacade

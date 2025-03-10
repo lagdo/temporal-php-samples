@@ -25,8 +25,8 @@ class Runtime implements RuntimeInterface
      */
     private array $activities = [];
 
-    public function __construct(private ContainerInterface $container, private WorkerInterface $worker,
-        private WorkerFactoryInterface $workerFactory)
+    public function __construct(private ContainerInterface $container,
+        private WorkerInterface $worker, private WorkerFactoryInterface $workerFactory)
     {}
 
     /**

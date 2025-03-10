@@ -2,6 +2,21 @@
 
 This repo provides sample applications and Docker Compose config to easily get started with [Temporal durable workflows](https://temporal.io/) and Symfony.
 
+## The applications
+
+There are 4 applications in the `apps` subdir.
+- An API to interact (start, query, signal) with the workflows: `apps\workflow-api`.
+- A first worker to execute Temporal workflow functions: `apps\workflow-worker`.
+- A second worker to execute Temporal activity functions: `apps\activity-worker`.
+- An `all-in-one` application which runs the API and the two wotkers in a single container.
+
+The workers are powered by the [RoadRunner](https://roadrunner.dev/) application server.
+The workflow workers and activity workers are configured to listen on two separate queues on the Temporal server.
+
+The API run either with [Nginx Unit](https://unit.nginx.org/), [FrankenPHP](https://frankenphp.dev/), `Nginx+PHP-FPM` or [RoadRunner](https://roadrunner.dev/).
+
+The workflow examples are taken from the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), and modified to adapt to the Symfony applications.
+
 ## Documentation
 
 1. [The Symfony applications](https://github.com/feuzeu/temporal-symfony-samples/wiki/1.-The-Symfony-applications)

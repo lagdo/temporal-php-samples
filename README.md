@@ -8,7 +8,7 @@ There are 4 applications in the `apps` subdir.
 - An API to interact (start, query, signal) with the workflows: `apps\workflow-api`.
 - A first worker to execute Temporal workflow functions: `apps\workflow-worker`.
 - A second worker to execute Temporal activity functions: `apps\activity-worker`.
-- An `all-in-one` application which runs the API and the two wotkers in a single container.
+- An `all-in-one` application which runs the API and a worker in a single container.
 
 The workers are powered by the [RoadRunner](https://roadrunner.dev/) application server.
 The workflow workers and activity workers are configured to listen on two separate queues on the Temporal server.

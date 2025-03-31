@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Temporal\Facade;
 
-use Lagdo\Symfony\Facades\AbstractFacade;
+use Lagdo\Facades\AbstractFacade;
 use Temporal\Client\WorkflowClientInterface;
 
 /**

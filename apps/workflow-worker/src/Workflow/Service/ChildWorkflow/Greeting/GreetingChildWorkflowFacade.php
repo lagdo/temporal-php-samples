@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Workflow\Service\ChildWorkflow\Greeting;
 
-use Lagdo\Symfony\Facades\AbstractFacade;
+use Lagdo\Facades\AbstractFacade;
 
 /**
  * @extends AbstractFacade<GreetingChildWorkflowInterface>

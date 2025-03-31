@@ -40,14 +40,16 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
             /** @var FulfilledPromise */
             $promise = Workflow::async(
                 function() use($itemId, $batchId, $options) {
+                    $activity = ActivityFacade::instance();
+
                     // Set the item processing as started.
-                    yield ActivityFacade::itemProcessingStarted($itemId, $batchId, $options);
+                    yield $activity->itemProcessingStarted($itemId, $batchId, $options);
 
                     // This activity randomly throws an exception.
-                    $output = yield ActivityFacade::processItem($itemId, $batchId, $options);
+                    $output = yield $activity->processItem($itemId, $batchId, $options);
 
                     // Set the item processing as ended.
-                    yield ActivityFacade::itemProcessingEnded($itemId, $batchId, $options);
+                    yield $activity->itemProcessingEnded($itemId, $batchId, $options);
 
                     return $output;
                 }

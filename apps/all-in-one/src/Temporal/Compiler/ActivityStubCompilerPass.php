@@ -4,7 +4,7 @@ namespace App\Temporal\Compiler;
 
 use App\Temporal\Attribute\ActivityOptions;
 use App\Temporal\Factory\ActivityFactory;
-use Lagdo\Symfony\Facades\AbstractFacade;
+use Lagdo\Facades\AbstractFacade;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -90,7 +90,7 @@ class ActivityStubCompilerPass implements CompilerPassInterface
             ->setArgument('$activity', $activity)
             ->setArgument('$options', new Reference($optionsKey))
             ->setShared(false) // A new instance must be returned each time.
-            ->setPublic(true); // The facade needs the service to be public.
+            ->setPublic(true); // The service facade needs the service to be public.
         $container->setDefinition($activity, $definition);
     }
 

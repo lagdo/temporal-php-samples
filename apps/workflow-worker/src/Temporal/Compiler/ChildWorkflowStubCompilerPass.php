@@ -4,8 +4,7 @@ namespace App\Temporal\Compiler;
 
 use App\Temporal\Attribute\ChildWorkflowOptions;
 use App\Temporal\Factory\ChildWorkflowFactory;
-use App\Temporal\Runtime\Runtime;
-use Lagdo\Symfony\Facades\AbstractFacade;
+use Lagdo\Facades\AbstractFacade;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -91,7 +90,7 @@ class ChildWorkflowStubCompilerPass implements CompilerPassInterface
             ->setArgument('$workflow', $workflow)
             ->setArgument('$options', new Reference($optionsKey))
             ->setShared(false) // A new instance must be returned each time.
-            ->setPublic(true); // The facade needs the service to be public.
+            ->setPublic(true); // The service facade needs the service to be public.
         $container->setDefinition($workflow, $definition);
     }
 

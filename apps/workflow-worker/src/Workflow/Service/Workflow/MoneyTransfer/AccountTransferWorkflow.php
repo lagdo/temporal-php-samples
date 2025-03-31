@@ -19,7 +19,8 @@ class AccountTransferWorkflow implements AccountTransferWorkflowInterface
     /**
      * @inheritDoc
      */
-    public function transfer(string $fromAccountId, string $toAccountId, string $referenceId, int $amountCents): Generator
+    public function transfer(string $fromAccountId, string $toAccountId,
+        string $referenceId, int $amountCents): Generator
     {
         $account = AccountActivityFacade::instance();
 

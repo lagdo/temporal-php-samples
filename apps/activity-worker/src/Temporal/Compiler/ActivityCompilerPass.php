@@ -3,7 +3,7 @@
 namespace App\Temporal\Compiler;
 
 use App\Temporal\Runtime\Runtime;
-use Lagdo\Symfony\Facades\AbstractFacade;
+use Lagdo\Facades\AbstractFacade;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

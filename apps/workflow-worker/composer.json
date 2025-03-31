@@ -8,7 +8,7 @@
         "ext-ctype": "*",
         "ext-grpc": "*",
         "ext-iconv": "*",
-        "lagdo/symfony-facades": "^2.3",
+        "lagdo/symfony-facades": "^2.4",
         "nyholm/psr7": "^1.8",
         "open-telemetry/exporter-otlp": "^1.0",
         "open-telemetry/transport-grpc": "^1.0",

@@ -13,7 +13,7 @@
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.2",
-        "lagdo/symfony-facades": "^2.3",
+        "lagdo/symfony-facades": "^2.4",
         "nelmio/api-doc-bundle": "^4.32",
         "nyholm/psr7": "^1.8",
         "open-telemetry/exporter-otlp": "^1.0",

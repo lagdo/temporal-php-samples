@@ -12,7 +12,7 @@ use Temporal\Workflow\WorkflowMethod;
 use Generator;
 
 #[WorkflowInterface]
-#[WorkflowOptions(serviceId: "simpleBatchWorkflowOptions")]
+#[WorkflowOptions(idInDiContainer: "simpleBatchWorkflowOptions")]
 interface SimpleBatchWorkflowInterface
 {
     /**

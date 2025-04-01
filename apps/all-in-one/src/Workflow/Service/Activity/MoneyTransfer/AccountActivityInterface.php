@@ -15,7 +15,7 @@ use App\Temporal\Attribute\ActivityOptions;
 use Temporal\Activity\ActivityInterface;
 
 #[ActivityInterface(prefix: "MoneyTransfer.")]
-#[ActivityOptions(serviceId: "defaultActivityOptions")]
+#[ActivityOptions(idInDiContainer: "defaultActivityOptions")]
 interface AccountActivityInterface
 {
     /**

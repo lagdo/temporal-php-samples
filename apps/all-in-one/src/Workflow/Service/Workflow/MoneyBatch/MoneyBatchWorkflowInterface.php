@@ -19,7 +19,7 @@ use Temporal\Workflow\WorkflowMethod;
 use Generator;
 
 #[WorkflowInterface]
-#[WorkflowOptions(serviceId: "moneyBatchWorkflowOptions")]
+#[WorkflowOptions(idInDiContainer: "moneyBatchWorkflowOptions")]
 interface MoneyBatchWorkflowInterface
 {
     /**

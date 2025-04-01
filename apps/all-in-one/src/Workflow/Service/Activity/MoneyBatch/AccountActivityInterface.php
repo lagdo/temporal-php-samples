@@ -15,7 +15,7 @@ use App\Temporal\Attribute\ActivityOptions;
 use Temporal\Activity\ActivityInterface;
 
 #[ActivityInterface(prefix: "MoneyBatch.")]
-#[ActivityOptions(serviceId: "moneyBatchActivityOptions")]
+#[ActivityOptions(idInDiContainer: "moneyBatchActivityOptions")]
 interface AccountActivityInterface
 {
     /**

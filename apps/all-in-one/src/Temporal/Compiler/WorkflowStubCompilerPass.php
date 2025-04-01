@@ -82,15 +82,16 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
      *
      * @return void
      */
-    private function registerWorkflowStub(ContainerBuilder $container, ReflectionClass $workflowInterface): void
+    private function registerWorkflowStub(ContainerBuilder $container,
+        ReflectionClass $workflowInterface): void
     {
         $workflow = $workflowInterface->getName();
         // The key for the options in the DI container
-        $optionsKey = $this->getOptionsKey($container, $workflowInterface);
+        $optionsId = $this->getOptionsIdInDiContainer($container, $workflowInterface);
         $definition = (new Definition($workflow))
             ->setFactory(WorkflowFactory::class . '::workflowStub')
             ->setArgument('$workflow', $workflow)
-            ->setArgument('$options', new Reference($optionsKey))
+            ->setArgument('$options', new Reference($optionsId))
             ->setArgument('$workflowClient', new Reference(WorkflowClientInterface::class))
             ->setShared(false) // A new instance must be returned each time.
             ->setPublic(true); // The service facade needs the service to be public.
@@ -104,12 +105,13 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
      *
      * @return string
      */
-    public function getOptionsKey(ContainerBuilder $container, ReflectionClass $workflowInterface): string
+    public function getOptionsIdInDiContainer(ContainerBuilder $container,
+        ReflectionClass $workflowInterface): string
     {
         $attributes = $workflowInterface->getAttributes(WorkflowOptions::class);
         if(count($attributes) > 0)
         {
-            return $attributes[0]->newInstance()->serviceId;
+            return $attributes[0]->newInstance()->idInDiContainer;
         }
 
         $parameter = $container->getParameter('workflowDefaultOptions');

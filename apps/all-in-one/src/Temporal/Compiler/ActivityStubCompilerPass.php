@@ -81,14 +81,15 @@ class ActivityStubCompilerPass implements CompilerPassInterface
      *
      * @return void
      */
-    private function registerActivityStub(ContainerBuilder $container, ReflectionClass $activityInterface): void
+    private function registerActivityStub(ContainerBuilder $container,
+        ReflectionClass $activityInterface): void
     {
         $activity = $activityInterface->getName();
-        $optionsKey = $this->getOptionsKey($container, $activityInterface);
+        $optionsId = $this->getOptionsIdInDiContainer($container, $activityInterface);
         $definition = (new Definition($activity))
             ->setFactory(ActivityFactory::class . '::activityStub')
             ->setArgument('$activity', $activity)
-            ->setArgument('$options', new Reference($optionsKey))
+            ->setArgument('$options', new Reference($optionsId))
             ->setShared(false) // A new instance must be returned each time.
             ->setPublic(true); // The service facade needs the service to be public.
         $container->setDefinition($activity, $definition);
@@ -101,12 +102,13 @@ class ActivityStubCompilerPass implements CompilerPassInterface
      *
      * @return string
      */
-    private function getOptionsKey(ContainerBuilder $container, ReflectionClass $activityInterface): string
+    private function getOptionsIdInDiContainer(ContainerBuilder $container,
+        ReflectionClass $activityInterface): string
     {
         $attributes = $activityInterface->getAttributes(ActivityOptions::class);
         if(count($attributes) > 0)
         {
-            return $attributes[0]->newInstance()->serviceId;
+            return $attributes[0]->newInstance()->idInDiContainer;
         }
 
         $parameter = $container->getParameter('activityDefaultOptions');

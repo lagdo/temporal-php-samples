@@ -8,7 +8,7 @@ use App\Temporal\Attribute\ActivityOptions;
 use Temporal\Activity\ActivityInterface;
 
 #[ActivityInterface(prefix: "SimpleBatch.")]
-#[ActivityOptions(serviceId: "simpleBatchActivityOptions")]
+#[ActivityOptions(idInDiContainer: "simpleBatchActivityOptions")]
 interface SimpleBatchActivityInterface
 {
     /**

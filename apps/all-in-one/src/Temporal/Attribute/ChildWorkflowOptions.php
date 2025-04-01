@@ -8,8 +8,8 @@ use Attribute;
 class ChildWorkflowOptions
 {
     /**
-     * @param string $serviceId
+     * @param string $idInDiContainer
      */
-    public function __construct(public string $serviceId)
+    public function __construct(public string $idInDiContainer)
     {}
 }

@@ -3,7 +3,7 @@
 namespace App\Service\SimpleBatch;
 
 use Exception;
-use Psr\Log\LoggerInterface;
+use Lagdo\Facades\Logger;
 
 use function array_map;
 use function random_int;
@@ -13,21 +13,16 @@ use function usleep;
 class SimpleBatchService
 {
     /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(private LoggerInterface $logger)
-    {}
-
-    /**
      * @param int $batchId
+     * @param int $minItemCount
+     * @param int $maxItemCount
      *
      * @return array<int,int>
      */
-    private function getItemIds(int $batchId): array
+    private function getItemIds(int $batchId, int $minItemCount, int $maxItemCount): array
     {
-        return array_map(function(int $itemId) use($batchId) {
-            return (($batchId % 100) * 1000) + $itemId;
-        }, range(101, random_int(120, 150)));
+        return array_map(fn(int $itemId) => ($batchId % 100) * 1000 + $itemId,
+            range(101, random_int(100 + $minItemCount, 100 + $maxItemCount)));
     }
 
     /**
@@ -42,12 +37,17 @@ class SimpleBatchService
 
     /**
      * @param int $batchId
+     * @param int $minItemCount
+     * @param int $maxItemCount
      *
      * @return array<array<int,string|int>>
      */
-    public function getBatchItemIds(int $batchId): array
+    public function getBatchItemIds(int $batchId, int $minItemCount = 20, int $maxItemCount = 50): array
     {
-        return [$this->getItemIds($batchId), $this->getOptions($batchId)];
+        return [
+            $this->getItemIds($batchId, $minItemCount, $maxItemCount),
+            $this->getOptions($batchId),
+        ];
     }
 
     /**
@@ -59,7 +59,7 @@ class SimpleBatchService
      */
     public function itemProcessingStarted(int $itemId, int $batchId, array $options): void
     {
-        $this->logger->debug("Started processing of item $itemId of batch $batchId.", ['options' => $options]);
+        Logger::debug("Started processing of item $itemId of batch $batchId.", ['options' => $options]);
     }
 
     /**
@@ -72,7 +72,7 @@ class SimpleBatchService
      */
     public function processItem(int $itemId, int $batchId, array $options): int
     {
-        $this->logger->debug("Processing item $itemId of batch $batchId.", ['options' => $options]);
+        Logger::debug("Processing item $itemId of batch $batchId.", ['options' => $options]);
 
         $random = random_int(0, 90);
         // Wait for max 1 second.
@@ -94,6 +94,6 @@ class SimpleBatchService
      */
     public function itemProcessingEnded(int $itemId, int $batchId, array $options): void
     {
-        $this->logger->debug("Ended processing of item $itemId of batch $batchId.", ['options' => $options]);
+        Logger::debug("Ended processing of item $itemId of batch $batchId.", ['options' => $options]);
     }
 }

@@ -11,10 +11,12 @@ interface SimpleBatchActivityInterface
 {
     /**
      * @param int $batchId
+     * @param int $minItemCount
+     * @param int $maxItemCount
      *
      * @return array<array<int,string|int>>
      */
-    public function getBatchItemIds(int $batchId): array;
+    public function getBatchItemIds(int $batchId, int $minItemCount = 20, int $maxItemCount = 50): array;
 
     /**
      * @param int $itemId

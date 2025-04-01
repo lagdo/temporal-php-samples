@@ -22,7 +22,7 @@ interface SimpleBatchWorkflowInterface
      */
     #[WorkflowMethod(name: "SimpleBatch")]
     #[ReturnType("string")]
-    public function start(int $batchId): Generator|string;
+    public function start(int $batchId, int $minItemCount = 20, int $maxItemCount = 50): Generator|string;
 
     /**
      * @return array<array<string|bool>>

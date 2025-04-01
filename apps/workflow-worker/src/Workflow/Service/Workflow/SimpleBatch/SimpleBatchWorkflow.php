@@ -29,9 +29,9 @@ class SimpleBatchWorkflow implements SimpleBatchWorkflowInterface
     /**
      * @inheritDoc
      */
-    public function start(int $batchId): Generator
+    public function start(int $batchId, int $minItemCount = 20, int $maxItemCount = 50): Generator
     {
-        [$itemIds, $options] = yield ActivityFacade::getBatchItemIds($batchId);
+        [$itemIds, $options] = yield ActivityFacade::getBatchItemIds($batchId, $minItemCount, $maxItemCount);
 
         $promises = [];
         foreach($itemIds as $itemId)

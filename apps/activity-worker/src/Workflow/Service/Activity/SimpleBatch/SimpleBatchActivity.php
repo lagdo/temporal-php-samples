@@ -14,9 +14,9 @@ class SimpleBatchActivity implements SimpleBatchActivityInterface
     /**
      * @inheritDoc
      */
-    public function getBatchItemIds(int $batchId): array
+    public function getBatchItemIds(int $batchId, int $minItemCount = 20, int $maxItemCount = 50): array
     {
-        return $this->simpleBatchService->getBatchItemIds($batchId);
+        return $this->simpleBatchService->getBatchItemIds($batchId, $minItemCount, $maxItemCount);
     }
 
     /**

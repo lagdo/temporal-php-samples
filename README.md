@@ -8,12 +8,12 @@ There are 4 applications in the `apps` subdir.
 - An API to interact (start, query, signal) with the workflows: `apps\workflow-api`.
 - A first worker to execute Temporal workflow functions: `apps\workflow-worker`.
 - A second worker to execute Temporal activity functions: `apps\activity-worker`.
-- An `all-in-one` application which runs the API and a worker in a single container.
+- An `all-in-one` application which runs the API and a worker which executes both the workflow and activity functions in a single container.
 
 The workers are powered by the [RoadRunner](https://roadrunner.dev/) application server.
 The workflow workers and activity workers are configured to listen on two separate queues on the Temporal server.
 
-The API run either with [Nginx Unit](https://unit.nginx.org/), [FrankenPHP](https://frankenphp.dev/), `Nginx+PHP-FPM` or [RoadRunner](https://roadrunner.dev/).
+The API runs either with [Nginx Unit](https://unit.nginx.org/), [FrankenPHP](https://frankenphp.dev/), `Nginx+PHP-FPM` or [RoadRunner](https://roadrunner.dev/).
 
 The workflow examples are taken from the [Temporal PHP SDK sampes](https://github.com/temporalio/samples-php), and modified to adapt to the Symfony applications.
 

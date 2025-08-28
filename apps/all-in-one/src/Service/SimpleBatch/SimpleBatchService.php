@@ -76,7 +76,7 @@ class SimpleBatchService
 
         $random = random_int(0, 90);
         // Wait for max 1 second.
-        usleep($random % 10000);
+        usleep($random * 10000);
 
         if($random > 30)
         {

@@ -25,7 +25,7 @@
         "symfony/validator": "6.4.*",
         "symfony/yaml": "6.4.*",
         "temporal/open-telemetry-interceptors": "dev-master",
-        "temporal/sdk": "^2.8.0"
+        "temporal/sdk": "^2.15.0"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.1"

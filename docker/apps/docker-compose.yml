@@ -22,6 +22,8 @@ services:
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
       - OTEL_SERVICE_NAME=app-activity-worker
+    networks:
+      - temporal-apps
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
@@ -50,6 +52,8 @@ services:
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
       - OTEL_SERVICE_NAME=app-workflow-worker
+    networks:
+      - temporal-apps
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
@@ -78,6 +82,8 @@ services:
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
       - OTEL_SERVICE_NAME=app-workflow-api
+    networks:
+      - temporal-apps
     ports:
       - 9300:80
     extra_hosts:
@@ -108,6 +114,8 @@ services:
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
       - OTEL_SERVICE_NAME=app-workflow-api
+    networks:
+      - temporal-apps
     ports:
       - 9301:80
     extra_hosts:
@@ -137,9 +145,16 @@ services:
       - TEMPORAL_HOST=temporal.addr
       - OTEL_HOST=collector.addr
       - OTEL_SERVICE_NAME=app-workflow-api
+    networks:
+      - temporal-apps
     ports:
       - 9302:80
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
     command: [ "/usr/local/bin/rr", "serve", "-c", "/var/www/rr.yaml" ]
+
+networks:
+  temporal-apps:
+    driver: bridge
+    name: temporal-apps

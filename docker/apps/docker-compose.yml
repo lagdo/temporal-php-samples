@@ -114,36 +114,6 @@ services:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"
 
-  workflow-api-nginx-phpfpm:
-    container_name: workflow-api-nginx-phpfpm
-    build:
-      context: ./
-      dockerfile: workflow-api/nginx-phpfpm/Dockerfile
-      args:
-        - PHP_USER=temporal
-        - PHP_UID=${PHP_UID:-1000}
-        - PHP_GID=${PHP_GID:-1000}
-    volumes:
-     - ../../apps/workflow-api:/var/www
-    environment:
-      - WORKFLOW_TASK_QUEUE=workflow.queue
-      - ACTIVITY_TASK_QUEUE=activity.queue
-      - TEMPORAL_SERVER_ENDPOINT=temporal.addr:7233
-      - TELEMETRY_DRIVER=otel
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://collector.addr:4318
-      - OTEL_PHP_TRACES_PROCESSOR=simple
-      - TEMPORAL_HOST=temporal.addr
-      - OTEL_HOST=collector.addr
-      - OTEL_SERVICE_NAME=app-workflow-api
-    ports:
-      - 9302:80
-    extra_hosts:
-      - "temporal.addr=host-gateway"
-      - "collector.addr=host-gateway"
-    command: [ "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf" ]
-
   workflow-api-roadrunner:
     container_name: workflow-api-roadrunner
     build:
@@ -168,7 +138,7 @@ services:
       - OTEL_HOST=collector.addr
       - OTEL_SERVICE_NAME=app-workflow-api
     ports:
-      - 9303:80
+      - 9302:80
     extra_hosts:
       - "temporal.addr=host-gateway"
       - "collector.addr=host-gateway"

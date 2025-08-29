@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Sample\Workflow\Service\Activity\MoneyTransfer;
 
-use App\Temporal\Attribute\ActivityOptions;
+use Sample\Temporal\Attribute\ActivityOptions;
 use Temporal\Activity\ActivityInterface;
 
 #[ActivityInterface(prefix: "MoneyTransfer.")]

@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Sample\Workflow\Service\Workflow\MoneyBatch;
 
-use App\Temporal\Attribute\WorkflowOptions;
+use Sample\Temporal\Attribute\WorkflowOptions;
 use Temporal\Workflow\QueryMethod;
 use Temporal\Workflow\SignalMethod;
 use Temporal\Workflow\WorkflowInterface;

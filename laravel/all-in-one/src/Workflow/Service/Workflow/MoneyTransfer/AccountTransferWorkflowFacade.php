@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Sample\Workflow\Service\Workflow\MoneyTransfer;
 
-use App\Temporal\Facade\AbstractWorkflowFacade;
+use Sample\Temporal\Facade\AbstractWorkflowFacade;
 
 /**
  * @extends AbstractWorkflowFacade<AccountTransferWorkflowInterface>

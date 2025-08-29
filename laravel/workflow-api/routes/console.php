@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Sample\Temporal\Runtime\RuntimeInterface;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+Artisan::command('temporal:runtime:run', function (RuntimeInterface $runtime) {
+    $runtime->run();
+})->purpose('Run the worker app');

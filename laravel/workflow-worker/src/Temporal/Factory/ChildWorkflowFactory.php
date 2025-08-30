@@ -10,17 +10,6 @@ use Temporal\Workflow;
 class ChildWorkflowFactory
 {
     /**
-     * @param string $workflowTaskQueue
-     *
-     * @return ChildWorkflowOptions
-     */
-    public static function defaultOptions(string $workflowTaskQueue): ChildWorkflowOptions
-    {
-        return ChildWorkflowOptions::new()
-            ->withTaskQueue($workflowTaskQueue);
-    }
-
-    /**
      * Factory for workflow stubs
      *
      * @template T of object

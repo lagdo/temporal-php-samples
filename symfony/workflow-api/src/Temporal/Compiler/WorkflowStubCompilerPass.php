@@ -17,9 +17,6 @@ use Temporal\Workflow\WorkflowInterface;
 use function count;
 use function is_string;
 
-/**
- * @template I of object
- */
 class WorkflowStubCompilerPass implements CompilerPassInterface
 {
     /**
@@ -51,6 +48,7 @@ class WorkflowStubCompilerPass implements CompilerPassInterface
 
     /**
      * @template T of object
+     * @template I of object
      * @param ReflectionClass<T> $workflowClass
      *
      * @return ReflectionClass<I>|null

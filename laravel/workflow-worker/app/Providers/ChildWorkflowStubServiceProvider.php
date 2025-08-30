@@ -11,7 +11,6 @@ use Temporal\Workflow\WorkflowInterface;
 use ReflectionClass;
 use ReflectionException;
 
-use function base_path;
 use function config;
 use function count;
 
@@ -25,26 +24,15 @@ class ChildWorkflowStubServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register the workflow classes.
-        $directory = base_path('src/Workflow/Service/ChildWorkflow');
-        $namespace = 'Sample\\Workflow\\Service\\ChildWorkflow';
-        $classes = $this->readClasses($directory, $namespace);
-        foreach($classes as $workflowClass)
+        $directories = config('temporal.register.child_workflows');
+        foreach($directories as $namespace => $directory)
         {
-            if($workflowClass->isSubclassOf(AbstractFacade::class) &&
-                ($workflowInterface = $this->getInterfaceFromFacade($workflowClass)) !== null)
+            $classes = $this->readClasses($directory, $namespace);
+            foreach($classes as $workflowClass)
             {
-                // The class is a facade on WorkflowInterface. Register a child workflow stub.
-                $this->registerChildWorkflowStub($workflowInterface);
+                $this->registerChildWorkflowStub($workflowClass);
             }
         }
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        //
     }
 
     /**
@@ -76,12 +64,23 @@ class ChildWorkflowStubServiceProvider extends ServiceProvider
 
     /**
      * @template T of object
-     * @param ReflectionClass<T> $workflowInterface
+     * @param ReflectionClass<T> $workflowClass
      *
      * @return void
      */
-    private function registerChildWorkflowStub(ReflectionClass $workflowInterface): void
+    private function registerChildWorkflowStub(ReflectionClass $workflowClass): void
     {
+        if(!$workflowClass->isSubclassOf(AbstractFacade::class))
+        {
+            return;
+        }
+        $workflowInterface = $this->getInterfaceFromFacade($workflowClass);
+        if($workflowInterface === null)
+        {
+            return;
+        }
+
+        // The class is a facade on WorkflowInterface. Register a child workflow stub.
         $workflow = $workflowInterface->getName();
         $this->app->singleton($workflow, function() use($workflowInterface) {
             $workflow = $workflowInterface->getName();

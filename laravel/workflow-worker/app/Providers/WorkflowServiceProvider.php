@@ -6,8 +6,11 @@ use Illuminate\Support\ServiceProvider;
 use Lagdo\Facades\AbstractFacade;
 use Sample\Temporal\Factory\ClassReaderTrait;
 use Temporal\Worker\WorkerInterface;
+use ReflectionClass;
 
-use function base_path;
+use function array_filter;
+use function array_map;
+use function config;
 use function count;
 
 class WorkflowServiceProvider extends ServiceProvider
@@ -19,33 +22,23 @@ class WorkflowServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $worker = $this->app->make(WorkerInterface::class);
-
-        // Register the workflow classes.
-        $workflows = [];
-        $directory = base_path('src/Workflow/Service/Workflow');
-        $namespace = 'Sample\\Workflow\\Service\\Workflow';
-        $classes = $this->readClasses($directory, $namespace);
-        foreach($classes as $workflowClass)
+        // Get the workflow classes.
+        $directories = config('temporal.register.workflows');
+        foreach($directories as $namespace => $directory)
         {
-            if(!$workflowClass->isSubclassOf(AbstractFacade::class))
+            $classes = $this->readClasses($directory, $namespace);
+            $workflows = array_filter($classes, fn(ReflectionClass $class): bool =>
+                !$class->isSubclassOf(AbstractFacade::class));
+            if(count($workflows) === 0)
             {
-                $workflows[] = $workflowClass->getName();
+                continue;
             }
-        }
 
-        // Register the workflow classes
-        if(count($workflows) > 0)
-        {
+            // Register the workflow classes
+            $workflows = array_map(fn(ReflectionClass $workflow): string =>
+                $workflow->getName(), $workflows);
+            $worker = $this->app->make(WorkerInterface::class);
             $worker->registerWorkflowTypes(...$workflows);
         }
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        //
     }
 }

@@ -11,7 +11,6 @@ use Temporal\Activity\ActivityInterface;
 use ReflectionClass;
 use ReflectionException;
 
-use function base_path;
 use function config;
 use function count;
 
@@ -25,26 +24,15 @@ class ActivityStubServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Process the classes that are tagged as activity.
-        $directory = base_path('src/Workflow/Service/Activity');
-        $namespace = 'Sample\\Workflow\\Service\\Activity';
-        $classes = $this->readClasses($directory, $namespace);
-        foreach($classes as $activityClass)
+        $directories = config('temporal.register.activities');
+        foreach($directories as $namespace => $directory)
         {
-            if($activityClass->isSubclassOf(AbstractFacade::class) &&
-                ($activityInterface = $this->getInterfaceFromFacade($activityClass)) !== null)
+            $classes = $this->readClasses($directory, $namespace);
+            foreach($classes as $activityClass)
             {
-                // The class is a facade on ActivityInterface. Register an activity stub.
-                $this->registerActivityStub($activityInterface);
+                $this->registerActivityStub($activityClass);
             }
         }
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        //
     }
 
     /**
@@ -76,12 +64,23 @@ class ActivityStubServiceProvider extends ServiceProvider
 
     /**
      * @template T of object
-     * @param ReflectionClass<T> $activityInterface
+     * @param ReflectionClass<T> $activityClass
      *
      * @return void
      */
-    private function registerActivityStub(ReflectionClass $activityInterface): void
+    private function registerActivityStub(ReflectionClass $activityClass): void
     {
+        if(!$activityClass->isSubclassOf(AbstractFacade::class))
+        {
+            return;
+        }
+        $activityInterface = $this->getInterfaceFromFacade($activityClass);
+        if($activityInterface === null)
+        {
+            return;
+        }
+
+        // The class is a facade on ActivityInterface. Register an activity stub.
         $activity = $activityInterface->getName();
         $this->app->singleton($activity, function() use($activityInterface) {
             $activity = $activityInterface->getName();

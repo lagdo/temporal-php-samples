@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\SwaggerServerUrl;
 use Wotz\SwaggerUi\Http\Middleware\EnsureUserIsAuthorized;
 
 return [
@@ -32,6 +33,7 @@ return [
              */
             'middleware' => [
                 'web',
+                SwaggerServerUrl::class,
                 EnsureUserIsAuthorized::class,
             ],
 
@@ -48,7 +50,7 @@ return [
             /*
              * The server URL configuration for the swagger file.
              */
-            'server_url' => env('APP_URL'),
+            'server_url' => env('APP_URL') . ':9300',
 
             /*
              * The oauth configuration for the swagger file.

@@ -11,7 +11,7 @@ use Temporal\WorkerFactory;
 use Temporal\Worker\WorkerFactoryInterface;
 use Temporal\Worker\WorkerInterface;
 
-use function env;
+use function config;
 
 class RuntimeServiceProvider extends ServiceProvider
 {
@@ -21,8 +21,8 @@ class RuntimeServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(Tracer::class, function() {
-            $serviceName = env('OTEL_SERVICE_NAME', 'app-activity-worker');
-            $collectorEndpoint = env('OTEL_COLLECTOR_ENDPOINT', 'http://collector.addr:4317');
+            $serviceName = config('temporal.runtime.otel.service');
+            $collectorEndpoint = config('temporal.runtime.otel.collector');
             return RuntimeFactory::tracer($serviceName, $collectorEndpoint);
         });
 
@@ -32,19 +32,11 @@ class RuntimeServiceProvider extends ServiceProvider
         $this->app->scoped(WorkerInterface::class, function() {
             $workerFactory = $this->app->make(WorkerFactoryInterface::class);
             $tracer = $this->app->make(Tracer::class);
-            $activityTaskQueue = env('ACTIVITY_TASK_QUEUE', WorkerFactoryInterface::DEFAULT_TASK_QUEUE);
+            $activityTaskQueue = config('temporal.runtime.queue.activity');
             return RuntimeFactory::worker($workerFactory, $tracer, $activityTaskQueue);
         });
 
         $this->app->scoped(Runtime::class, Runtime::class);
         $this->app->alias(Runtime::class, RuntimeInterface::class);
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        //
     }
 }

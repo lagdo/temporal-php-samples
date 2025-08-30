@@ -1,0 +1,31 @@
+version: "3"
+
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+server:
+  command: "php artisan temporal:runtime:run"
+  user: "temporal"
+  group: "temporal"
+
+temporal:
+  address: ${TEMPORAL_HOST:-temporal.addr}:${TEMPORAL_PORT:-7233}
+  activities:
+    num_workers: 4
+
+logs:
+  level: info
+  mode: development
+  output: stdout
+  err_output: stderr
+  # encoding: json
+
+otel:
+  insecure: true
+  compress: false
+  client: http
+  exporter: otlp
+  resource:
+    service_name: run-workflow-worker
+    service_version: 1.0.0
+  endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

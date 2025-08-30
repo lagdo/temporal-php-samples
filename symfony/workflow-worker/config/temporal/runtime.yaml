@@ -13,7 +13,6 @@ services:
             $workflowTaskQueue: '%env(WORKFLOW_TASK_QUEUE)%'
 
     Temporal\OpenTelemetry\Tracer:
-        shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
             $serviceName: '%env(OTEL_SERVICE_NAME)%'
@@ -26,7 +25,6 @@ services:
 
     Temporal\Worker\WorkerInterface:
         factory: ['App\Temporal\Factory\RuntimeFactory', 'worker']
-        shared: false
 
     # Temporal classes
     App\Temporal\:

@@ -19,7 +19,7 @@ class WorkflowCompilerPass implements CompilerPassInterface
     {
         $runtimeDefinition = $container->getDefinition(Runtime::class);
 
-        // Register the classes that are tagged as workflow.
+        // Register the workflow classes.
         /** @var array<class-string,mixed> */
         $workflows = $container->findTaggedServiceIds('temporal.service.workflow');
         foreach($workflows as $workflowClassName => $_)

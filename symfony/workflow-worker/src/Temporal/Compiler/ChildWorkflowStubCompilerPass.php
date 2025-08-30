@@ -28,7 +28,7 @@ class ChildWorkflowStubCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        // Register the classes that are tagged as workflow.
+        // Register the workflow classes.
         /** @var array<class-string,mixed> */
         $workflows = $container->findTaggedServiceIds('temporal.service.workflow.child');
         foreach($workflows as $workflowClassName => $_)

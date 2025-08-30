@@ -26,16 +26,17 @@ class RuntimeFactory
     /**
      * @param WorkerFactoryInterface $workerFactory
      * @param Tracer $tracer
-     * @param string|null $activityTaskQueue
+     * @param string $activityTaskQueue
      *
      * @return WorkerInterface
      */
     public static function worker(WorkerFactoryInterface $workerFactory,
-        Tracer $tracer, string|null $activityTaskQueue): WorkerInterface
+        Tracer $tracer, string $activityTaskQueue): WorkerInterface
     {
+        \Log::debug('Worker', ['task-queue' => $activityTaskQueue]);
         // Create a worker that listens on a task queue.
         return $workerFactory->newWorker(
-            taskQueue: $activityTaskQueue ?? WorkerFactoryInterface::DEFAULT_TASK_QUEUE,
+            taskQueue: $activityTaskQueue,
             interceptorProvider: new SimplePipelineProvider([
                 new OpenTelemetryActivityInboundInterceptor($tracer),
             ])

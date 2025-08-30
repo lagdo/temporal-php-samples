@@ -10,13 +10,4 @@ interface RuntimeInterface
      * @return void
      */
     public function run(): void;
-
-    /**
-     * Register an activity class
-     *
-     * @param class-string $activityClassName
-     *
-     * @return void
-     */
-    public function addActivity(string $activityClassName): void;
 }

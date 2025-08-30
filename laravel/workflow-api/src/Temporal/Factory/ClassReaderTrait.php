@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Sample\Temporal\Factory;
 
-use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use ReflectionClass;
 
 use function str_replace;
@@ -23,9 +24,12 @@ trait ClassReaderTrait
      */
     protected function readClasses(string $directory, string $namespace): array
     {
+        $directory = rtrim($directory, '/\\');
+        $namespace = rtrim($namespace, '\\');
         $dirPathLength = strlen($directory);
         $classes = [];
-        $fileIterator = new FilesystemIterator($directory);
+        $dirIterator = new RecursiveDirectoryIterator($directory);
+        $fileIterator = new RecursiveIteratorIterator($dirIterator);
         // Iterate on dir content
         foreach($fileIterator as $file)
         {

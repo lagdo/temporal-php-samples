@@ -12,7 +12,6 @@ services:
         autowire: true
 
     Temporal\OpenTelemetry\Tracer:
-        shared: false
         factory: ['App\Temporal\Factory\RuntimeFactory', 'tracer']
         arguments:
             $serviceName: '%env(OTEL_SERVICE_NAME)%'

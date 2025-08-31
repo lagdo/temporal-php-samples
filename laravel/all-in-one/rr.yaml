@@ -41,6 +41,6 @@ otel:
   client: http
   exporter: otlp
   resource:
-    service_name: temporal-all-in-one-app
+    service_name: ${OTEL_SERVICE_NAME:-temporal-all-in-one-app}
     service_version: 1.0.0
   endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

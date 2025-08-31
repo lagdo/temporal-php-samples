@@ -26,6 +26,6 @@ otel:
   client: http
   exporter: otlp
   resource:
-    service_name: run-activity-worker
+    service_name: ${OTEL_SERVICE_NAME:-temporal-activity-worker}
     service_version: 1.0.0
   endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

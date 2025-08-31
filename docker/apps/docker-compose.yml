@@ -9,7 +9,7 @@ services:
         - PHP_UID=${PHP_UID:-1000}
         - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../../apps/activity-worker:/var/www
+     - ../../<group>/activity-worker:/var/www
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
@@ -39,7 +39,7 @@ services:
         - PHP_UID=${PHP_UID:-1000}
         - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../../apps/workflow-worker:/var/www
+     - ../../<group>/workflow-worker:/var/www
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
@@ -69,7 +69,7 @@ services:
         - PHP_UID=${PHP_UID:-1000}
         - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../../apps/workflow-api:/var/www
+     - ../../<group>/workflow-api:/var/www
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
@@ -101,7 +101,7 @@ services:
         - PHP_UID=${PHP_UID:-1000}
         - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../../apps/workflow-api:/app
+     - ../../<group>/workflow-api:/app
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue
@@ -132,7 +132,7 @@ services:
         - PHP_UID=${PHP_UID:-1000}
         - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../../apps/workflow-api:/var/www
+     - ../../<group>/workflow-api:/var/www
     environment:
       - WORKFLOW_TASK_QUEUE=workflow.queue
       - ACTIVITY_TASK_QUEUE=activity.queue

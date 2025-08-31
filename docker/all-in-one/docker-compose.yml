@@ -9,7 +9,7 @@ services:
         - PHP_UID=${PHP_UID:-1000}
         - PHP_GID=${PHP_GID:-1000}
     volumes:
-     - ../../apps/all-in-one:/var/www
+     - ../../<group>/all-in-one:/var/www
     environment:
       - TEMPORAL_TASK_QUEUE=temporal.queue
       - TEMPORAL_SERVER_ENDPOINT=temporal.addr:7233
@@ -22,7 +22,7 @@ services:
       - OTEL_HOST=collector.addr
       - OTEL_SERVICE_NAME=app-temporal-samples
     networks:
-      - temporal-apps
+      - temporal-one
     ports:
       - 9400:80
     extra_hosts:
@@ -31,6 +31,6 @@ services:
     command: [ "/usr/local/bin/rr", "serve", "-c", "/var/www/rr.yaml" ]
 
 networks:
-  temporal-apps:
+  temporal-one:
     driver: bridge
-    name: temporal-apps
+    name: temporal-one

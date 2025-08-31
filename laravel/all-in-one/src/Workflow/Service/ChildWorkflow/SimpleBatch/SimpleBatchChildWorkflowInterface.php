@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace Sample\Workflow\Service\ChildWorkflow\SimpleBatch;
 
+use Generator;
 use Temporal\Workflow\WorkflowInterface;
 use Temporal\Workflow\WorkflowMethod;
-use Generator;
 
 #[WorkflowInterface]
 interface SimpleBatchChildWorkflowInterface

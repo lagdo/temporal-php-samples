@@ -33,7 +33,6 @@ class RuntimeFactory
     public static function worker(WorkerFactoryInterface $workerFactory,
         Tracer $tracer, string $activityTaskQueue): WorkerInterface
     {
-        \Log::debug('Worker', ['task-queue' => $activityTaskQueue]);
         // Create a worker that listens on a task queue.
         return $workerFactory->newWorker(
             taskQueue: $activityTaskQueue,

@@ -18,11 +18,11 @@ interface SimpleBatchWorkflowInterface
     /**
      * @param int $batchId
      *
-     * @return Generator
+     * @return Generator|string
      */
     #[WorkflowMethod(name: "SimpleBatch")]
     #[ReturnType("string")]
-    public function start(int $batchId, int $minItemCount = 20, int $maxItemCount = 50): Generator;
+    public function start(int $batchId, int $minItemCount = 20, int $maxItemCount = 50): Generator|string;
 
     /**
      * @return array<array<string|bool>>

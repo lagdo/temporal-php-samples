@@ -22,9 +22,9 @@ interface GreetingWorkflowInterface
     /**
      * @param string $name
      *
-     * @return Generator
+     * @return Generator|string
      */
     #[WorkflowMethod(name: "SimpleActivity.greet")]
-    public function greet(string $name): Generator;
+    public function greet(string $name): Generator|string;
 }
 // @@@SNIPEND

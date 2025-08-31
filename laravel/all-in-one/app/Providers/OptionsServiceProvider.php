@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Carbon\CarbonInterval;
 use Illuminate\Support\ServiceProvider;
+use Temporal\Client\WorkflowOptions;
 use Temporal\Activity\ActivityOptions;
 use Temporal\Common\RetryOptions;
 use Temporal\Workflow\ChildWorkflowOptions;
@@ -17,16 +18,37 @@ class OptionsServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Default workflow options
+        $this->app->scoped('defaultWorkflowOptions', function(): WorkflowOptions {
+            return WorkflowOptions::new()
+                ->withTaskQueue(config('temporal.runtime.queue.default'))
+                ->withWorkflowExecutionTimeout(CarbonInterval::minute());
+        });
+
+        // Money batch workflow options
+        $this->app->scoped('moneyBatchWorkflowOptions', function(): WorkflowOptions {
+            return WorkflowOptions::new()
+                ->withTaskQueue(config('temporal.runtime.queue.default'))
+                ->withWorkflowExecutionTimeout(CarbonInterval::hour());
+        });
+
+        // Simple batch workflow options
+        $this->app->scoped('simpleBatchWorkflowOptions', function(): WorkflowOptions {
+            return WorkflowOptions::new()
+                ->withTaskQueue(config('temporal.runtime.queue.default'))
+                ->withWorkflowExecutionTimeout(CarbonInterval::week());
+        });
+
         // Default child workflow options
         $this->app->scoped('defaultChildWorkflowOptions', function(): ChildWorkflowOptions {
             return ChildWorkflowOptions::new()
-                ->withTaskQueue(config('temporal.runtime.queue.workflow'));
+                ->withTaskQueue(config('temporal.runtime.queue.default'));
         });
 
         // Default activity options
         $this->app->scoped('defaultActivityOptions', function(): ActivityOptions {
             return ActivityOptions::new()
-                ->withTaskQueue(config('temporal.runtime.queue.activity'))
+                ->withTaskQueue(config('temporal.runtime.queue.default'))
                 ->withStartToCloseTimeout(CarbonInterval::seconds(15))
                 ->withRetryOptions(
                     RetryOptions::new()->withMaximumAttempts(10)
@@ -36,7 +58,7 @@ class OptionsServiceProvider extends ServiceProvider
         // Money batch activity options
         $this->app->scoped('moneyBatchActivityOptions', function(): ActivityOptions {
             return ActivityOptions::new()
-                ->withTaskQueue(config('temporal.runtime.queue.activity'))
+                ->withTaskQueue(config('temporal.runtime.queue.default'))
                 ->withStartToCloseTimeout(CarbonInterval::seconds(15))
                 ->withScheduleToCloseTimeout(CarbonInterval::hour(1))
                 ->withRetryOptions(
@@ -50,7 +72,7 @@ class OptionsServiceProvider extends ServiceProvider
         // Simple batch activity options
         $this->app->scoped('simpleBatchActivityOptions', function(): ActivityOptions {
             return ActivityOptions::new()
-                ->withTaskQueue(config('temporal.runtime.queue.activity'))
+                ->withTaskQueue(config('temporal.runtime.queue.default'))
                 ->withStartToCloseTimeout(CarbonInterval::seconds(10))
                 ->withScheduleToStartTimeout(CarbonInterval::seconds(10))
                 ->withScheduleToCloseTimeout(CarbonInterval::minutes(30))

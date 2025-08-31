@@ -21,8 +21,8 @@ interface GreetingParentWorkflowInterface
     /**
      * @param string $name
      *
-     * @return Generator
+     * @return Generator|string
      */
     #[WorkflowMethod(name: "Parent.greet")]
-    public function greet(string $name): Generator;
+    public function greet(string $name): Generator|string;
 }

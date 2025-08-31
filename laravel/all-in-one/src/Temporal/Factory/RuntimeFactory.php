@@ -19,35 +19,14 @@ use Temporal\Client\GRPC\ServiceClient;
 use Temporal\Client\WorkflowClient;
 use Temporal\Client\WorkflowClientInterface;
 use Temporal\Interceptor\SimplePipelineProvider;
-use Temporal\OpenTelemetry\Interceptor\OpenTelemetryActivityInboundInterceptor;
 use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowClientCallsInterceptor;
-use Temporal\OpenTelemetry\Interceptor\OpenTelemetryWorkflowOutboundRequestInterceptor;
+use Temporal\OpenTelemetry\Interceptor\OpenTelemetryActivityInboundInterceptor;
 use Temporal\OpenTelemetry\Tracer;
 use Temporal\Worker\WorkerFactoryInterface;
 use Temporal\Worker\WorkerInterface;
 
 class RuntimeFactory
 {
-    /**
-     * @param WorkerFactoryInterface $workerFactory
-     * @param Tracer $tracer
-     * @param string|null $temporalTaskQueue
-     *
-     * @return WorkerInterface
-     */
-    public static function worker(WorkerFactoryInterface $workerFactory,
-        Tracer $tracer, string|null $temporalTaskQueue): WorkerInterface
-    {
-        // Create a worker that listens on a task queue.
-        return $workerFactory->newWorker(
-            taskQueue: $temporalTaskQueue ?? WorkerFactoryInterface::DEFAULT_TASK_QUEUE,
-            interceptorProvider: new SimplePipelineProvider([
-                new OpenTelemetryWorkflowOutboundRequestInterceptor($tracer),
-                new OpenTelemetryActivityInboundInterceptor($tracer),
-            ])
-        );
-    }
-
     /**
      * @param non-empty-string $serverAddress
      * @param Tracer $tracer
@@ -60,6 +39,25 @@ class RuntimeFactory
             serviceClient: ServiceClient::create($serverAddress),
             interceptorProvider: new SimplePipelineProvider([
                 new OpenTelemetryWorkflowClientCallsInterceptor($tracer),
+            ])
+        );
+    }
+
+    /**
+     * @param WorkerFactoryInterface $workerFactory
+     * @param Tracer $tracer
+     * @param string $defaultTaskQueue
+     *
+     * @return WorkerInterface
+     */
+    public static function worker(WorkerFactoryInterface $workerFactory,
+        Tracer $tracer, string $defaultTaskQueue): WorkerInterface
+    {
+        // Create a worker that listens on a task queue.
+        return $workerFactory->newWorker(
+            taskQueue: $defaultTaskQueue,
+            interceptorProvider: new SimplePipelineProvider([
+                new OpenTelemetryActivityInboundInterceptor($tracer),
             ])
         );
     }

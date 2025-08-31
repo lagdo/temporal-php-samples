@@ -36,6 +36,6 @@ otel:
   client: http
   exporter: otlp
   resource:
-    service_name: run-workflow-api
+    service_name: temporal-workflow-api
     service_version: 1.0.0
   endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}

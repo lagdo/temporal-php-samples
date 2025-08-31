@@ -4,7 +4,7 @@ rpc:
   listen: tcp://127.0.0.1:6001
 
 server:
-  command: "php boot/app.php"
+  command: "php vendor/bin/rr-worker start"
   user: "temporal"
   group: "temporal"
 
@@ -20,14 +20,12 @@ http:
     forbid: [ ".php", ".htaccess" ]
 
 temporal:
-  address: ${TEMPORAL_HOST:-temporal.addr}:${TEMPORAL_PORT:-7233}
+  address: temporal.addr:7233
   activities:
     num_workers: 4
 
 logs:
   mode: development
-  output: stdout
-  err_output: stderr
   channels:
     http:
       level: debug # Log all http requests, set to info to disable
@@ -43,6 +41,6 @@ otel:
   client: http
   exporter: otlp
   resource:
-    service_name: run-temporal-samples
+    service_name: temporal-all-in-one-app
     service_version: 1.0.0
   endpoint: ${OTEL_HOST:-collector.addr}:${OTEL_PORT:-4318}
